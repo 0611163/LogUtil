@@ -19,9 +19,7 @@ namespace Utils
         #region 字段
         private static string _path = null;
 
-        private static Mutex _mutexDebug = new Mutex(false, "LogUtil.Mutex.Debug.252F8025254D4DAA8EFB7FFE177F13E0");
-        private static Mutex _mutexInfo = new Mutex(false, "LogUtil.Mutex.Info.180740C3B1C44D428683D35F84F97E22");
-        private static Mutex _mutexError = new Mutex(false, "LogUtil.Mutex.Error.81273C1400774A3B8310C2EC1C3AFFFF");
+        private static Mutex _mutex = new Mutex(false, "LogUtil.Mutex.180740C3B1C44D428683D35F84F97E22");
 
         private static ConcurrentDictionary<string, int> _dictIndex = new ConcurrentDictionary<string, int>();
         private static ConcurrentDictionary<string, long> _dictSize = new ConcurrentDictionary<string, long>();
@@ -212,7 +210,7 @@ namespace Utils
             {
                 try
                 {
-                    _mutexDebug.WaitOne();
+                    _mutex.WaitOne();
 
                     log = CreateLogString(LogType.Debug, log);
                     string path = CreateLogPath(LogType.Debug, log);
@@ -224,7 +222,7 @@ namespace Utils
                 }
                 finally
                 {
-                    _mutexDebug.ReleaseMutex();
+                    _mutex.ReleaseMutex();
                 }
             }, CancellationToken.None, TaskCreationOptions.None, _scheduler);
         }
@@ -245,7 +243,7 @@ namespace Utils
             {
                 try
                 {
-                    _mutexError.WaitOne();
+                    _mutex.WaitOne();
 
                     log = CreateLogString(LogType.Error, log);
                     string path = CreateLogPath(LogType.Error, log);
@@ -257,7 +255,7 @@ namespace Utils
                 }
                 finally
                 {
-                    _mutexError.ReleaseMutex();
+                    _mutex.ReleaseMutex();
                 }
             }, CancellationToken.None, TaskCreationOptions.None, _scheduler);
         }
@@ -273,7 +271,7 @@ namespace Utils
             {
                 try
                 {
-                    _mutexInfo.WaitOne();
+                    _mutex.WaitOne();
 
                     log = CreateLogString(LogType.Info, log);
                     string path = CreateLogPath(LogType.Info, log);
@@ -285,7 +283,7 @@ namespace Utils
                 }
                 finally
                 {
-                    _mutexInfo.ReleaseMutex();
+                    _mutex.ReleaseMutex();
                 }
             }, CancellationToken.None, TaskCreationOptions.None, _scheduler);
         }
