@@ -23,7 +23,7 @@ namespace LogUtilTest
 
         private log4net.ILog _log2 = null;
 
-        private int n = 500000;
+        private int n = 100000;
 
         public Form1()
         {
