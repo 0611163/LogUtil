@@ -19,7 +19,7 @@ namespace LogUtilTest
 {
     public partial class Form1 : Form
     {
-        private Logger _log = NLog.LogManager.GetLogger("NLogTest");
+        private Logger _log = NLog.LogManager.GetCurrentClassLogger();
 
         private log4net.ILog _log2 = null;
 
