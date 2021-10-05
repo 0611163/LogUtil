@@ -19,6 +19,8 @@ namespace LogUtilTest
     {
         private Logger _log = NLog.LogManager.GetLogger("NLogTest");
 
+        private int n = 10000;
+
         public Form1()
         {
             InitializeComponent();
@@ -54,52 +56,52 @@ namespace LogUtilTest
 
         private void button2_Click(object sender, EventArgs e)
         {
-            Log("==== 开始 ========");
-            Stopwatch stopwatch = new Stopwatch();
-            stopwatch.Start();
-            ConcurrentQueue<Task> taskQueue = new ConcurrentQueue<Task>();
-            List<Task> taskList = new List<Task>();
-            Task tsk = null;
-
-            tsk = Task.Run(() =>
+            Task.Run(() =>
             {
-                int n = 10000;
-                for (int i = 0; i < n; i++)
+                Log("==== 开始 ========");
+                Stopwatch stopwatch = new Stopwatch();
+                stopwatch.Start();
+                ConcurrentQueue<Task> taskQueue = new ConcurrentQueue<Task>();
+                List<Task> taskList = new List<Task>();
+                Task tsk = null;
+
+                tsk = Task.Run(() =>
                 {
-                    Task task = LogUtil.Log("测试日志 " + i.ToString("000000"));
-                    taskQueue.Enqueue(task);
-                }
-            });
-            taskList.Add(tsk);
+                    for (int i = 0; i < n; i++)
+                    {
+                        Task task = LogUtil.Log("测试日志 " + i.ToString("000000"));
+                        taskQueue.Enqueue(task);
+                    }
+                });
+                taskList.Add(tsk);
 
-            tsk = Task.Run(() =>
-            {
-                int n = 10000;
-                for (int i = 0; i < n; i++)
+                tsk = Task.Run(() =>
                 {
-                    Task task = LogUtil.Debug("测试日志 " + i.ToString("000000"));
-                    taskQueue.Enqueue(task);
-                }
-            });
-            taskList.Add(tsk);
+                    for (int i = 0; i < n; i++)
+                    {
+                        Task task = LogUtil.Debug("测试日志 " + i.ToString("000000"));
+                        taskQueue.Enqueue(task);
+                    }
+                });
+                taskList.Add(tsk);
 
-            tsk = Task.Run(() =>
-            {
-                int n = 10000;
-                for (int i = 0; i < n; i++)
+                tsk = Task.Run(() =>
                 {
-                    Task task = LogUtil.Error("测试日志 " + i.ToString("000000"));
-                    taskQueue.Enqueue(task);
-                }
+                    for (int i = 0; i < n; i++)
+                    {
+                        Task task = LogUtil.Error("测试日志 " + i.ToString("000000"));
+                        taskQueue.Enqueue(task);
+                    }
+                });
+                taskList.Add(tsk);
+
+                Task.WaitAll(taskList.ToArray());
+                Task.WaitAll(taskQueue.ToArray());
+                Log("taskQueue.Count=" + taskQueue.Count);
+
+                Log("==== 结束 " + "，耗时：" + stopwatch.Elapsed.TotalSeconds.ToString("0.000") + " 秒 ========");
+                stopwatch.Stop();
             });
-            taskList.Add(tsk);
-
-            Task.WaitAll(taskList.ToArray());
-            Task.WaitAll(taskQueue.ToArray());
-            Log("taskQueue.Count=" + taskQueue.Count);
-
-            Log("==== 结束 " + "，耗时：" + stopwatch.Elapsed.TotalSeconds.ToString("0.000") + " 秒 ========");
-            stopwatch.Stop();
         }
 
         private async void button3_Click(object sender, EventArgs e)
@@ -111,7 +113,6 @@ namespace LogUtilTest
 
             await Task.Run(() =>
             {
-                int n = 10000;
                 for (int i = 0; i < n; i++)
                 {
                     Task task = LogUtil.Log("测试日志 " + i.ToString("000000"));
@@ -121,7 +122,6 @@ namespace LogUtilTest
 
             await Task.Run(() =>
             {
-                int n = 10000;
                 for (int i = 0; i < n; i++)
                 {
                     Task task = LogUtil.Debug("测试日志 " + i.ToString("000000"));
@@ -131,7 +131,6 @@ namespace LogUtilTest
 
             await Task.Run(() =>
             {
-                int n = 10000;
                 for (int i = 0; i < n; i++)
                 {
                     Task task = LogUtil.Error("测试日志 " + i.ToString("000000"));
@@ -163,7 +162,6 @@ namespace LogUtilTest
 
                 tsk = Task.Run(() =>
                 {
-                    int n = 10000;
                     for (int i = 0; i < n; i++)
                     {
                         _log.Info("测试日志 " + i.ToString("000000"));
@@ -173,7 +171,6 @@ namespace LogUtilTest
 
                 tsk = Task.Run(() =>
                 {
-                    int n = 10000;
                     for (int i = 0; i < n; i++)
                     {
                         _log.Debug("测试日志 " + i.ToString("000000"));
@@ -183,7 +180,6 @@ namespace LogUtilTest
 
                 tsk = Task.Run(() =>
                 {
-                    int n = 10000;
                     for (int i = 0; i < n; i++)
                     {
                         _log.Error("测试日志 " + i.ToString("000000"));
