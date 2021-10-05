@@ -1,4 +1,5 @@
-﻿using System;
+﻿using NLog;
+using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -16,6 +17,8 @@ namespace LogUtilTest
 {
     public partial class Form1 : Form
     {
+        private Logger _log = NLog.LogManager.GetLogger("NLogTest");
+
         public Form1()
         {
             InitializeComponent();
@@ -144,6 +147,57 @@ namespace LogUtilTest
 
             Log("==== 结束 " + "，耗时：" + stopwatch.Elapsed.TotalSeconds.ToString("0.000") + " 秒 ========");
             stopwatch.Stop();
+        }
+
+        //对比NLog
+        private void button4_Click(object sender, EventArgs e)
+        {
+            Task.Run(() =>
+            {
+                Log("==== 开始 ========");
+                Stopwatch stopwatch = new Stopwatch();
+                stopwatch.Start();
+                ConcurrentQueue<Task> taskQueue = new ConcurrentQueue<Task>();
+                List<Task> taskList = new List<Task>();
+                Task tsk = null;
+
+                tsk = Task.Run(() =>
+                {
+                    int n = 10000;
+                    for (int i = 0; i < n; i++)
+                    {
+                        _log.Info("测试日志 " + i.ToString("000000"));
+                    }
+                });
+                taskList.Add(tsk);
+
+                tsk = Task.Run(() =>
+                {
+                    int n = 10000;
+                    for (int i = 0; i < n; i++)
+                    {
+                        _log.Debug("测试日志 " + i.ToString("000000"));
+                    }
+                });
+                taskList.Add(tsk);
+
+                tsk = Task.Run(() =>
+                {
+                    int n = 10000;
+                    for (int i = 0; i < n; i++)
+                    {
+                        _log.Error("测试日志 " + i.ToString("000000"));
+                    }
+                });
+                taskList.Add(tsk);
+
+                Task.WaitAll(taskList.ToArray());
+                //Task.WaitAll(taskQueue.ToArray());
+                //Log("taskQueue.Count=" + taskQueue.Count);
+
+                Log("==== 结束 " + "，耗时：" + stopwatch.Elapsed.TotalSeconds.ToString("0.000") + " 秒 ========");
+                stopwatch.Stop();
+            });
         }
     }
 }
