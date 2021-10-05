@@ -19,7 +19,7 @@ namespace LogUtilTest
     {
         private Logger _log = NLog.LogManager.GetLogger("NLogTest");
 
-        private int n = 10000;
+        private int n = 100000;
 
         public Form1()
         {
@@ -156,15 +156,16 @@ namespace LogUtilTest
                 Log("==== 开始 ========");
                 Stopwatch stopwatch = new Stopwatch();
                 stopwatch.Start();
-                ConcurrentQueue<Task> taskQueue = new ConcurrentQueue<Task>();
                 List<Task> taskList = new List<Task>();
                 Task tsk = null;
+                int taskCount = 0;
 
                 tsk = Task.Run(() =>
                 {
                     for (int i = 0; i < n; i++)
                     {
                         _log.Info("测试日志 " + i.ToString("000000"));
+                        Interlocked.Increment(ref taskCount);
                     }
                 });
                 taskList.Add(tsk);
@@ -174,6 +175,7 @@ namespace LogUtilTest
                     for (int i = 0; i < n; i++)
                     {
                         _log.Debug("测试日志 " + i.ToString("000000"));
+                        Interlocked.Increment(ref taskCount);
                     }
                 });
                 taskList.Add(tsk);
@@ -183,13 +185,13 @@ namespace LogUtilTest
                     for (int i = 0; i < n; i++)
                     {
                         _log.Error("测试日志 " + i.ToString("000000"));
+                        Interlocked.Increment(ref taskCount);
                     }
                 });
                 taskList.Add(tsk);
 
                 Task.WaitAll(taskList.ToArray());
-                //Task.WaitAll(taskQueue.ToArray());
-                //Log("taskQueue.Count=" + taskQueue.Count);
+                Log("Task Count=" + taskCount);
 
                 Log("==== 结束 " + "，耗时：" + stopwatch.Elapsed.TotalSeconds.ToString("0.000") + " 秒 ========");
                 stopwatch.Stop();
