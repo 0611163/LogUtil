@@ -6,7 +6,9 @@ using System.ComponentModel;
 using System.Data;
 using System.Diagnostics;
 using System.Drawing;
+using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -19,12 +21,21 @@ namespace LogUtilTest
     {
         private Logger _log = NLog.LogManager.GetLogger("NLogTest");
 
-        private int n = 100000;
+        private log4net.ILog _log2 = null;
+
+        private int n = 500000;
 
         public Form1()
         {
             InitializeComponent();
             ThreadPool.SetMinThreads(20, 20);
+
+            UriBuilder uri = new UriBuilder(Assembly.GetExecutingAssembly().CodeBase);
+            string path = Path.GetDirectoryName(Uri.UnescapeDataString(uri.Path));
+            FileInfo configFile = new FileInfo(Path.Combine(path, "log4net.config"));
+            log4net.Config.XmlConfigurator.Configure(configFile);
+
+            _log2 = log4net.LogManager.GetLogger(typeof(Form1));
         }
 
         #region Log
@@ -185,6 +196,56 @@ namespace LogUtilTest
                     for (int i = 0; i < n; i++)
                     {
                         _log.Error("测试日志 " + i.ToString("000000"));
+                        Interlocked.Increment(ref taskCount);
+                    }
+                });
+                taskList.Add(tsk);
+
+                Task.WaitAll(taskList.ToArray());
+                Log("Task Count=" + taskCount);
+
+                Log("==== 结束 " + "，耗时：" + stopwatch.Elapsed.TotalSeconds.ToString("0.000") + " 秒 ========");
+                stopwatch.Stop();
+            });
+        }
+
+        //对比log4net
+        private void button5_Click(object sender, EventArgs e)
+        {
+            Task.Run(() =>
+            {
+                Log("==== 开始 ========");
+                Stopwatch stopwatch = new Stopwatch();
+                stopwatch.Start();
+                List<Task> taskList = new List<Task>();
+                Task tsk = null;
+                int taskCount = 0;
+
+                tsk = Task.Run(() =>
+                {
+                    for (int i = 0; i < n; i++)
+                    {
+                        _log2.Info("测试日志 " + i.ToString("000000"));
+                        Interlocked.Increment(ref taskCount);
+                    }
+                });
+                taskList.Add(tsk);
+
+                tsk = Task.Run(() =>
+                {
+                    for (int i = 0; i < n; i++)
+                    {
+                        _log2.Debug("测试日志 " + i.ToString("000000"));
+                        Interlocked.Increment(ref taskCount);
+                    }
+                });
+                taskList.Add(tsk);
+
+                tsk = Task.Run(() =>
+                {
+                    for (int i = 0; i < n; i++)
+                    {
+                        _log2.Error("测试日志 " + i.ToString("000000"));
                         Interlocked.Increment(ref taskCount);
                     }
                 });
