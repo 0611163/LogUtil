@@ -44,6 +44,7 @@
     <Compile Include="LogType.cs" />
     <Compile Include="LogUtil.cs" />
     <Compile Include="LogWriter.cs" />
+    <Compile Include="LogWriterUseMutex.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
