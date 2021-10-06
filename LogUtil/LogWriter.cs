@@ -31,7 +31,13 @@ namespace Utils
 
         private long _currentFileSize = 0;
 
+        private string _currentDateStr;
+
         private bool _run = true;
+
+        private string _dateFormat = "yyyyMMddHHmmss"; //日志文件名日期格式化
+
+        private string _rootFolder = "Log"; //日志文件夹名称
 
         #endregion
 
@@ -54,7 +60,8 @@ namespace Utils
             InitBasePath();
 
             //创建目录
-            string logFilePath = CreateLogPath(_logType);
+            _currentDateStr = DateTime.Now.ToString(_dateFormat);
+            string logFilePath = CreateLogPath(_logType, _currentDateStr);
             string logDir = Path.GetDirectoryName(logFilePath);
 
             if (!Directory.Exists(logDir))
@@ -66,7 +73,7 @@ namespace Utils
             CreateStream(logFilePath);
 
             //初始化 _currentArchiveIndex
-            InitCurrentArchiveIndex(logDir);
+            InitCurrentArchiveIndex(logDir, _currentDateStr);
 
             //初始化 _currentFileSize
             InitCurrentFileSize(logFilePath);
@@ -91,10 +98,9 @@ namespace Utils
         /// <summary>
         /// 初始化 _currentArchiveIndex
         /// </summary>
-        private void InitCurrentArchiveIndex(string pathFolder)
+        private void InitCurrentArchiveIndex(string pathFolder, string currentDateStr)
         {
-            string strNow = DateTime.Now.ToString("yyyyMMdd");
-            Regex regex = new Regex(strNow + "_*(\\d*).txt");
+            Regex regex = new Regex(currentDateStr + "_*(\\d*).txt");
             string[] fileArr = Directory.GetFiles(pathFolder);
             foreach (string file in fileArr)
             {
@@ -139,14 +145,21 @@ namespace Utils
             Thread thread = null;
             thread = new Thread(new ThreadStart(() =>
             {
-                string log;
-
-                while (_run)
+                try
                 {
-                    if (_logs.TryTake(out log, Timeout.Infinite))
+                    string log;
+
+                    while (_run)
                     {
-                        WriteFile(log, logFilePath);
+                        if (_logs.TryTake(out log, Timeout.Infinite))
+                        {
+                            WriteFile(log, logFilePath);
+                        }
                     }
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine(ex.Message + "\r\n" + ex.StackTrace);
                 }
             }));
             thread.IsBackground = true;
@@ -162,6 +175,24 @@ namespace Utils
         {
             _fileStream = new FileStream(logFilePath, FileMode.Append, FileAccess.Write, FileShare.ReadWrite);
             _streamWriter = new StreamWriter(_fileStream, Encoding.UTF8);
+        }
+        #endregion
+
+        #region CloseStream
+        /// <summary>
+        /// 关闭日志写入流
+        /// </summary>
+        private void CloseStream()
+        {
+            if (_streamWriter != null)
+            {
+                _streamWriter.Close();
+            }
+
+            if (_fileStream != null)
+            {
+                _fileStream.Close();
+            }
         }
         #endregion
 
@@ -191,6 +222,13 @@ namespace Utils
                     CreateArchive(logFilePath);
                 }
 
+                string dateStr = DateTime.Now.ToString(_dateFormat);
+                if (_currentDateStr != dateStr)
+                {
+                    _currentDateStr = dateStr;
+                    UpdateLogFileName(_currentDateStr);
+                }
+
                 _streamWriter.WriteLine(log);
                 _streamWriter.Flush();
             }
@@ -209,11 +247,10 @@ namespace Utils
         {
             string logDir = Path.GetDirectoryName(logFilePath);
             string fileName = Path.GetFileNameWithoutExtension(logFilePath);
-            _streamWriter.Close();
-            File.Move(logFilePath, Path.Combine(logDir, fileName + "_" + (++_currentArchiveIndex) + ".txt"));
 
-            //创建日志写入流
-            CreateStream(logFilePath);
+            CloseStream(); //关闭日志写入流
+            File.Move(logFilePath, Path.Combine(logDir, fileName + "_" + (++_currentArchiveIndex) + ".txt")); //存档
+            CreateStream(logFilePath); //创建日志写入流
         }
         #endregion
 
@@ -221,18 +258,41 @@ namespace Utils
         /// <summary>
         /// 生成日志文件路径
         /// </summary>
-        private string CreateLogPath(LogType logType)
+        private string CreateLogPath(LogType logType, string currentDateStr)
         {
             try
             {
-                string strNow = DateTime.Now.ToString("yyyyMMdd");
-                return Path.Combine(_basePath, "Log\\" + logType.ToString() + "\\", strNow + ".txt");
+                return Path.Combine(_basePath, _rootFolder + "\\" + logType.ToString() + "\\", currentDateStr + ".txt");
             }
             catch (Exception ex)
             {
                 Console.WriteLine(ex.Message + "\r\n" + ex.StackTrace);
                 return null;
             }
+        }
+        #endregion
+
+        #region UpdateLogFileName
+        /// <summary>
+        /// 更新日志文件名
+        /// </summary>
+        private void UpdateLogFileName(string currentDateStr)
+        {
+            //关闭日志写入流
+            CloseStream();
+
+            //创建新的日志路径
+            string logFilePath = CreateLogPath(_logType, currentDateStr);
+            string logDir = Path.GetDirectoryName(logFilePath);
+
+            //创建日志写入流
+            CreateStream(logFilePath);
+
+            //初始化 _currentArchiveIndex
+            InitCurrentArchiveIndex(logDir, currentDateStr);
+
+            //初始化 _currentFileSize
+            InitCurrentFileSize(logFilePath);
         }
         #endregion
 
