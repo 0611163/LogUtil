@@ -23,8 +23,6 @@ namespace Utils
 
         private LogStream _currentStream = new LogStream();
 
-        private bool _run = true;
-
         private string _dateFormat = "yyyyMMddHHmm"; //日志文件名日期格式化
 
         private string _rootFolder = "Log"; //日志文件夹名称
