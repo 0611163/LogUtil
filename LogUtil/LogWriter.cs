@@ -19,8 +19,6 @@ namespace Utils
 
         private string _basePath;
 
-        private BlockingCollection<string> _logs = new BlockingCollection<string>();
-
         private int _fileSize = 1 * 1024 * 1024; //日志分隔文件大小
 
         private LogStream _currentStream = new LogStream();
@@ -56,9 +54,6 @@ namespace Utils
 
             //更新日志写入流
             UpdateCurrentStream();
-
-            //创建写日志线程
-            CreateWriterThread();
         }
         #endregion
 
@@ -129,37 +124,6 @@ namespace Utils
         }
         #endregion
 
-        #region CreateWriterThread
-        /// <summary>
-        /// 创建写日志线程
-        /// </summary>
-        private void CreateWriterThread()
-        {
-            Thread thread = null;
-            thread = new Thread(new ThreadStart(() =>
-            {
-                try
-                {
-                    string log;
-
-                    while (_run)
-                    {
-                        if (_logs.TryTake(out log, Timeout.Infinite))
-                        {
-                            WriteFile(log);
-                        }
-                    }
-                }
-                catch (Exception ex)
-                {
-                    Console.WriteLine(ex.Message + "\r\n" + ex.StackTrace);
-                }
-            }));
-            thread.IsBackground = true;
-            thread.Start();
-        }
-        #endregion
-
         #region CreateStream
         /// <summary>
         /// 创建日志写入流
@@ -225,7 +189,6 @@ namespace Utils
                 }
 
                 //日志内容写入文件
-                log = CreateLogString(_logType, log);
                 _currentStream.CurrentStreamWriter.WriteLine(log);
                 _currentStream.CurrentStreamWriter.Flush();
             }
@@ -289,7 +252,15 @@ namespace Utils
         /// <param name="log">日志内容</param>
         public void WriteLog(string log)
         {
-            _logs.Add(log);
+            try
+            {
+                log = CreateLogString(_logType, log);
+                WriteFile(log);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message + "\r\n" + ex.StackTrace);
+            }
         }
         #endregion
 
