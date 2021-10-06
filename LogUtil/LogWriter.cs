@@ -19,11 +19,11 @@ namespace Utils
 
         private string _basePath;
 
-        private int _fileSize = 1 * 1024 * 1024; //日志分隔文件大小
+        private int _fileSize = 10 * 1024 * 1024; //日志分隔文件大小
 
         private LogStream _currentStream = new LogStream();
 
-        private string _dateFormat = "yyyyMMddHHmm"; //日志文件名日期格式化
+        private string _dateFormat = "yyyyMMdd"; //日志文件名日期格式化
 
         private string _rootFolder = "Log"; //日志文件夹名称
 
