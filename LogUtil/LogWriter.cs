@@ -73,7 +73,7 @@ namespace Utils
         private void InitCurrentArchiveIndex()
         {
             Regex regex = new Regex(_currentStream.CurrentDateStr + "_*(\\d*).txt");
-            string[] fileArr = Directory.GetFiles(_currentStream.CurrentLogFileDir, _currentStream.CurrentDateStr);
+            string[] fileArr = Directory.GetFiles(_currentStream.CurrentLogFileDir, _currentStream.CurrentDateStr + "*");
             foreach (string file in fileArr)
             {
                 Match match = regex.Match(file);
