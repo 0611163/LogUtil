@@ -72,16 +72,16 @@ namespace LogUtilTest
                 Log("==== 开始 ========");
                 Stopwatch stopwatch = new Stopwatch();
                 stopwatch.Start();
-                ConcurrentQueue<Task> taskQueue = new ConcurrentQueue<Task>();
                 List<Task> taskList = new List<Task>();
                 Task tsk = null;
+                int taskCount = 0;
 
                 tsk = Task.Run(() =>
                 {
                     for (int i = 0; i < n; i++)
                     {
-                        Task task = LogUtil.Log("测试日志 " + i.ToString("000000"));
-                        taskQueue.Enqueue(task);
+                        LogUtil.Log("测试日志 " + i.ToString("000000"));
+                        Interlocked.Increment(ref taskCount);
                     }
                 });
                 taskList.Add(tsk);
@@ -90,8 +90,8 @@ namespace LogUtilTest
                 {
                     for (int i = 0; i < n; i++)
                     {
-                        Task task = LogUtil.Debug("测试日志 " + i.ToString("000000"));
-                        taskQueue.Enqueue(task);
+                        LogUtil.Debug("测试日志 " + i.ToString("000000"));
+                        Interlocked.Increment(ref taskCount);
                     }
                 });
                 taskList.Add(tsk);
@@ -100,67 +100,22 @@ namespace LogUtilTest
                 {
                     for (int i = 0; i < n; i++)
                     {
-                        Task task = LogUtil.Error("测试日志 " + i.ToString("000000"));
-                        taskQueue.Enqueue(task);
+                        LogUtil.Error("测试日志 " + i.ToString("000000"));
+                        Interlocked.Increment(ref taskCount);
                     }
                 });
                 taskList.Add(tsk);
 
                 Task.WaitAll(taskList.ToArray());
-                Task.WaitAll(taskQueue.ToArray());
-                Log("taskQueue.Count=" + taskQueue.Count);
+                Log("Task Count=" + taskCount);
 
                 Log("==== 结束 " + "，耗时：" + stopwatch.Elapsed.TotalSeconds.ToString("0.000") + " 秒 ========");
                 stopwatch.Stop();
             });
         }
 
-        private async void button3_Click(object sender, EventArgs e)
-        {
-            Log("==== 开始 ========");
-            Stopwatch stopwatch = new Stopwatch();
-            stopwatch.Start();
-            ConcurrentQueue<Task> taskQueue = new ConcurrentQueue<Task>();
-
-            await Task.Run(() =>
-            {
-                for (int i = 0; i < n; i++)
-                {
-                    Task task = LogUtil.Log("测试日志 " + i.ToString("000000"));
-                    taskQueue.Enqueue(task);
-                }
-            });
-
-            await Task.Run(() =>
-            {
-                for (int i = 0; i < n; i++)
-                {
-                    Task task = LogUtil.Debug("测试日志 " + i.ToString("000000"));
-                    taskQueue.Enqueue(task);
-                }
-            });
-
-            await Task.Run(() =>
-            {
-                for (int i = 0; i < n; i++)
-                {
-                    Task task = LogUtil.Error("测试日志 " + i.ToString("000000"));
-                    taskQueue.Enqueue(task);
-                }
-            });
-
-            Log("taskQueue.Count=" + taskQueue.Count);
-            foreach (Task tsk in taskQueue.ToList())
-            {
-                await tsk;
-            }
-
-            Log("==== 结束 " + "，耗时：" + stopwatch.Elapsed.TotalSeconds.ToString("0.000") + " 秒 ========");
-            stopwatch.Stop();
-        }
-
         //对比NLog
-        private void button4_Click(object sender, EventArgs e)
+        private void button3_Click(object sender, EventArgs e)
         {
             Task.Run(() =>
             {
@@ -210,7 +165,7 @@ namespace LogUtilTest
         }
 
         //对比log4net
-        private void button5_Click(object sender, EventArgs e)
+        private void button4_Click(object sender, EventArgs e)
         {
             Task.Run(() =>
             {
@@ -258,5 +213,6 @@ namespace LogUtilTest
                 stopwatch.Stop();
             });
         }
+
     }
 }
