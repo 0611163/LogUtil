@@ -17,186 +17,32 @@ namespace Utils
     public class LogUtil
     {
         #region 字段
-        private static string _path = null;
+        private static LogWriter _infoWriter = new LogWriter(LogType.Info);
 
-        private static Mutex _mutex = new Mutex(false, "LogUtil.Mutex.180740C3B1C44D428683D35F84F97E22");
+        private static LogWriter _debugWriter = new LogWriter(LogType.Debug);
 
-        private static ConcurrentDictionary<string, int> _dictIndex = new ConcurrentDictionary<string, int>();
-        private static ConcurrentDictionary<string, long> _dictSize = new ConcurrentDictionary<string, long>();
-        private static ConcurrentDictionary<string, FileStream> _dictStream = new ConcurrentDictionary<string, FileStream>();
-        private static ConcurrentDictionary<string, StreamWriter> _dictWriter = new ConcurrentDictionary<string, StreamWriter>();
-
-        private static ConcurrentDictionary<string, string> _dictPathFolders = new ConcurrentDictionary<string, string>();
+        private static LogWriter _errorWriter = new LogWriter(LogType.Error);
 
         private static TaskSchedulerEx _scheduler = new TaskSchedulerEx(2, 2);
-
-        private static int _fileSize = 10 * 1024 * 1024; //日志分隔文件大小
         #endregion
 
-        #region 写文件
+        #region 写操作日志
         /// <summary>
-        /// 写文件
+        /// 写操作日志
         /// </summary>
-        private static void WriteFile(LogType logType, string log, string path)
+        public static Task Log(string log)
         {
-            try
+            return Task.Factory.StartNew(() =>
             {
-                FileStream fs = null;
-                StreamWriter sw = null;
-
-                if (!(_dictStream.TryGetValue(logType.ToString() + path, out fs) && _dictWriter.TryGetValue(logType.ToString() + path, out sw)))
+                try
                 {
-                    foreach (string key in _dictWriter.Keys)
-                    {
-                        if (key.StartsWith(logType.ToString()))
-                        {
-                            StreamWriter item;
-                            _dictWriter.TryRemove(key, out item);
-                            item.Close();
-                        }
-                    }
-
-                    foreach (string key in _dictStream.Keys)
-                    {
-                        if (key.StartsWith(logType.ToString()))
-                        {
-                            FileStream item;
-                            _dictStream.TryRemove(key, out item);
-                            item.Close();
-                        }
-                    }
-
-                    if (!Directory.Exists(Path.GetDirectoryName(path)))
-                    {
-                        Directory.CreateDirectory(Path.GetDirectoryName(path));
-                    }
-
-                    fs = new FileStream(path, FileMode.Append, FileAccess.Write, FileShare.ReadWrite);
-                    sw = new StreamWriter(fs);
-                    _dictWriter.TryAdd(logType.ToString() + path, sw);
-                    _dictStream.TryAdd(logType.ToString() + path, fs);
+                    _infoWriter.WriteLog(log);
                 }
-
-                fs.Seek(0, SeekOrigin.End);
-                sw.WriteLine(log);
-                sw.Flush();
-                fs.Flush();
-            }
-            catch (Exception ex)
-            {
-                string str = ex.Message;
-            }
-        }
-        #endregion
-
-        #region 生成日志文件路径
-        /// <summary>
-        /// 生成日志文件路径
-        /// </summary>
-        private static string CreateLogPath(LogType logType, string log)
-        {
-            try
-            {
-                if (_path == null)
+                catch (Exception ex)
                 {
-                    UriBuilder uri = new UriBuilder(Assembly.GetExecutingAssembly().CodeBase);
-                    _path = Path.GetDirectoryName(Uri.UnescapeDataString(uri.Path));
+                    Console.WriteLine(ex.Message + "\r\n" + ex.StackTrace);
                 }
-
-                string pathFolder = Path.Combine(_path, "Log\\" + logType.ToString() + "\\");
-                if (!_dictPathFolders.ContainsKey(pathFolder))
-                {
-                    if (!Directory.Exists(Path.GetDirectoryName(pathFolder)))
-                    {
-                        Directory.CreateDirectory(Path.GetDirectoryName(pathFolder));
-                    }
-                    _dictPathFolders.TryAdd(pathFolder, pathFolder);
-                }
-
-                int currentIndex;
-                long size;
-                string strNow = DateTime.Now.ToString("yyyyMMdd");
-                string strKey = pathFolder + strNow;
-                if (!(_dictIndex.TryGetValue(strKey, out currentIndex) && _dictSize.TryGetValue(strKey, out size)))
-                {
-                    _dictIndex.Clear();
-                    _dictSize.Clear();
-
-                    GetIndexAndSize(pathFolder, strNow, out currentIndex, out size);
-                    if (size >= _fileSize) currentIndex++;
-                    _dictIndex.TryAdd(strKey, currentIndex);
-                    _dictSize.TryAdd(strKey, size);
-                }
-
-                int index = _dictIndex[strKey];
-                string logPath = Path.Combine(pathFolder, strNow + (index == 1 ? "" : "_" + index.ToString()) + ".txt");
-
-                _dictSize[strKey] += Encoding.UTF8.GetByteCount(log);
-                if (_dictSize[strKey] > _fileSize)
-                {
-                    _dictIndex[strKey]++;
-                    _dictSize[strKey] = 0;
-                }
-
-                return logPath;
-            }
-            catch (Exception ex)
-            {
-                string str = ex.Message;
-                return null;
-            }
-        }
-        #endregion
-
-        #region 拼接日志内容
-        /// <summary>
-        /// 拼接日志内容
-        /// </summary>
-        private static string CreateLogString(LogType logType, string log)
-        {
-            return string.Format(@"{0} {1} {2}", DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff"), ("[" + logType.ToString() + "]").PadRight(7, ' '), log);
-        }
-        #endregion
-
-        #region 获取初始Index和Size
-        /// <summary>
-        /// 获取初始Index和Size
-        /// </summary>
-        private static void GetIndexAndSize(string pathFolder, string strNow, out int index, out long size)
-        {
-            index = 1;
-            size = 0;
-            Regex regex = new Regex(strNow + "_*(\\d*).txt");
-            string[] fileArr = Directory.GetFiles(pathFolder);
-            string currentFile = null;
-            foreach (string file in fileArr)
-            {
-                Match match = regex.Match(file);
-                if (match.Success)
-                {
-                    string str = match.Groups[1].Value;
-                    if (!string.IsNullOrWhiteSpace(str))
-                    {
-                        int temp = Convert.ToInt32(str);
-                        if (temp > index)
-                        {
-                            index = temp;
-                            currentFile = file;
-                        }
-                    }
-                    else
-                    {
-                        index = 1;
-                        currentFile = file;
-                    }
-                }
-            }
-
-            if (currentFile != null)
-            {
-                FileInfo fileInfo = new FileInfo(currentFile);
-                size = fileInfo.Length;
-            }
+            }, CancellationToken.None, TaskCreationOptions.None, _scheduler);
         }
         #endregion
 
@@ -210,19 +56,11 @@ namespace Utils
             {
                 try
                 {
-                    _mutex.WaitOne();
-
-                    log = CreateLogString(LogType.Debug, log);
-                    string path = CreateLogPath(LogType.Debug, log);
-                    WriteFile(LogType.Debug, log, path);
+                    _debugWriter.WriteLog(log);
                 }
                 catch (Exception ex)
                 {
-                    string str = ex.Message;
-                }
-                finally
-                {
-                    _mutex.ReleaseMutex();
+                    Console.WriteLine(ex.Message + "\r\n" + ex.StackTrace);
                 }
             }, CancellationToken.None, TaskCreationOptions.None, _scheduler);
         }
@@ -243,66 +81,16 @@ namespace Utils
             {
                 try
                 {
-                    _mutex.WaitOne();
-
-                    log = CreateLogString(LogType.Error, log);
-                    string path = CreateLogPath(LogType.Error, log);
-                    WriteFile(LogType.Error, log, path);
+                    _errorWriter.WriteLog(log);
                 }
                 catch (Exception ex)
                 {
-                    string str = ex.Message;
-                }
-                finally
-                {
-                    _mutex.ReleaseMutex();
-                }
-            }, CancellationToken.None, TaskCreationOptions.None, _scheduler);
-        }
-        #endregion
-
-        #region 写操作日志
-        /// <summary>
-        /// 写操作日志
-        /// </summary>
-        public static Task Log(string log)
-        {
-            return Task.Factory.StartNew(() =>
-            {
-                try
-                {
-                    _mutex.WaitOne();
-
-                    log = CreateLogString(LogType.Info, log);
-                    string path = CreateLogPath(LogType.Info, log);
-                    WriteFile(LogType.Info, log, path);
-                }
-                catch (Exception ex)
-                {
-                    string str = ex.Message;
-                }
-                finally
-                {
-                    _mutex.ReleaseMutex();
+                    Console.WriteLine(ex.Message + "\r\n" + ex.StackTrace);
                 }
             }, CancellationToken.None, TaskCreationOptions.None, _scheduler);
         }
         #endregion
 
     }
-
-    #region 日志类型
-    /// <summary>
-    /// 日志类型
-    /// </summary>
-    public enum LogType
-    {
-        Debug,
-
-        Info,
-
-        Error
-    }
-    #endregion
 
 }
