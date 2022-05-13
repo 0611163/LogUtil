@@ -58,6 +58,23 @@ namespace LogUtilTest
         }
         #endregion
 
+        #region TaskRun
+        private Task TaskRun(Action action)
+        {
+            return Task.Run(() =>
+            {
+                try
+                {
+                    action();
+                }
+                catch (Exception ex)
+                {
+                    Log(ex.Message + "\r\n" + ex.StackTrace);
+                }
+            });
+        }
+        #endregion
+
         private void button1_Click(object sender, EventArgs e)
         {
             LogUtil.Log("测试写 Info 日志");
@@ -76,7 +93,7 @@ namespace LogUtilTest
                 Task tsk = null;
                 int taskCount = 0;
 
-                tsk = Task.Run(() =>
+                tsk = TaskRun(() =>
                 {
                     for (int i = 0; i < n; i++)
                     {
@@ -86,7 +103,7 @@ namespace LogUtilTest
                 });
                 taskList.Add(tsk);
 
-                tsk = Task.Run(() =>
+                tsk = TaskRun(() =>
                 {
                     for (int i = 0; i < n; i++)
                     {
@@ -96,7 +113,7 @@ namespace LogUtilTest
                 });
                 taskList.Add(tsk);
 
-                tsk = Task.Run(() =>
+                tsk = TaskRun(() =>
                 {
                     for (int i = 0; i < n; i++)
                     {
@@ -126,7 +143,7 @@ namespace LogUtilTest
                 Task tsk = null;
                 int taskCount = 0;
 
-                tsk = Task.Run(() =>
+                tsk = TaskRun(() =>
                 {
                     for (int i = 0; i < n; i++)
                     {
@@ -136,7 +153,7 @@ namespace LogUtilTest
                 });
                 taskList.Add(tsk);
 
-                tsk = Task.Run(() =>
+                tsk = TaskRun(() =>
                 {
                     for (int i = 0; i < n; i++)
                     {
@@ -146,7 +163,7 @@ namespace LogUtilTest
                 });
                 taskList.Add(tsk);
 
-                tsk = Task.Run(() =>
+                tsk = TaskRun(() =>
                 {
                     for (int i = 0; i < n; i++)
                     {
@@ -176,7 +193,7 @@ namespace LogUtilTest
                 Task tsk = null;
                 int taskCount = 0;
 
-                tsk = Task.Run(() =>
+                tsk = TaskRun(() =>
                 {
                     for (int i = 0; i < n; i++)
                     {
@@ -186,7 +203,7 @@ namespace LogUtilTest
                 });
                 taskList.Add(tsk);
 
-                tsk = Task.Run(() =>
+                tsk = TaskRun(() =>
                 {
                     for (int i = 0; i < n; i++)
                     {
@@ -196,7 +213,7 @@ namespace LogUtilTest
                 });
                 taskList.Add(tsk);
 
-                tsk = Task.Run(() =>
+                tsk = TaskRun(() =>
                 {
                     for (int i = 0; i < n; i++)
                     {
@@ -214,5 +231,34 @@ namespace LogUtilTest
             });
         }
 
+
+        //计算LogUtil日志行数
+        private void button5_Click(object sender, EventArgs e)
+        {
+            TaskRun(() =>
+            {
+                UriBuilder uri = new UriBuilder(Assembly.GetExecutingAssembly().CodeBase);
+                string basePath = Path.GetDirectoryName(Uri.UnescapeDataString(uri.Path));
+
+                int count = 0;
+                foreach (string file in Directory.GetFiles(basePath + "\\Log", "*", SearchOption.AllDirectories))
+                {
+                    if (File.Exists(file))
+                    {
+                        using (FileStream fs = new FileStream(file, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
+                        {
+                            using (StreamReader sr = new StreamReader(fs))
+                            {
+                                while (!string.IsNullOrWhiteSpace(sr.ReadLine()))
+                                {
+                                    count++;
+                                }
+                            }
+                        }
+                    }
+                }
+                Log("LogUtil日志行数：" + count);
+            });
+        }
     }
 }
