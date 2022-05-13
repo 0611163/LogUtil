@@ -13,5 +13,11 @@
 
 4. 多进程多线程，忽略掉误差，NLog比LogUtil快一倍，NLog跑满所有线程(任务管理器CPU占用100%，所有线程跑满)，LogUtil未跑满所有线程(任务管理器CPU占用100%，但未跑满所有线程，我自己的CPU监控工具显示CPU占用率60%)，log4net未测试。(该项测试需要稍微修改一下测试代码)
 
+5. 单进程单线程，忽略掉误差，LogUtil大约比LogUtilUseMutex快50%
+
+6. 单进程多线程，忽略掉误差，LogUtil大约比LogUtilUseMutex快50%
+
+7. 综上，单进程程序，建议使用LogUtil，因为LogUtil不支持多进程，多进程程序建议使用LogUtilUseMutex
+
 
 
