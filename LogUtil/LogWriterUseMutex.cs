@@ -134,7 +134,7 @@ namespace Utils
         /// </summary>
         private void CreateStream()
         {
-            _currentStream.CurrentFileStream = new FileStream(_currentStream.CurrentLogFilePath, FileMode.Append, FileAccess.Write, FileShare.ReadWrite);
+            _currentStream.CurrentFileStream = new FileStream(_currentStream.CurrentLogFilePath, FileMode.OpenOrCreate, FileAccess.Write, FileShare.ReadWrite);
             _currentStream.CurrentStreamWriter = new StreamWriter(_currentStream.CurrentFileStream, Encoding.UTF8);
         }
         #endregion
@@ -217,11 +217,34 @@ namespace Utils
         /// </summary>
         private void CreateArchive()
         {
-            string fileName = Path.GetFileNameWithoutExtension(_currentStream.CurrentLogFilePath);
+            try
+            {
+                CloseStream(); //关闭日志写入流
 
-            CloseStream(); //关闭日志写入流
-            File.Move(_currentStream.CurrentLogFilePath, Path.Combine(_currentStream.CurrentLogFileDir, fileName + "_" + (++_currentStream.CurrentArchiveIndex) + ".txt")); //存档
-            CreateStream(); //创建日志写入流
+                string fileName = Path.GetFileNameWithoutExtension(_currentStream.CurrentLogFilePath);
+                string newFilePath = Path.Combine(_currentStream.CurrentLogFileDir, fileName + "_" + (++_currentStream.CurrentArchiveIndex) + ".txt");
+
+                if (!File.Exists(newFilePath))
+                {
+                    File.Copy(_currentStream.CurrentLogFilePath, newFilePath); //存档
+
+                    //清空
+                    _currentStream.CurrentFileStream = new FileStream(_currentStream.CurrentLogFilePath, FileMode.Open, FileAccess.Write, FileShare.ReadWrite);
+                    _currentStream.CurrentFileStream.SetLength(0);
+                    _currentStream.CurrentFileStream.Close();
+                }
+                else
+                {
+                    //初始化 _currentFileSize
+                    InitCurrentFileSize();
+                }
+
+                CreateStream(); //创建日志写入流
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message + "\r\n" + ex.StackTrace);
+            }
         }
         #endregion
 
