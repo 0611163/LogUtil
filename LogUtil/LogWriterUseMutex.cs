@@ -32,6 +32,8 @@ namespace Utils
 
         private Mutex _mutex;
 
+        private int _logCount = 0;
+
         #endregion
 
         #region LogWriter
@@ -177,6 +179,8 @@ namespace Utils
             {
                 _mutex.WaitOne();
 
+                _logCount++;
+
                 //判断是否更新Stream
                 string dateStr = DateTime.Now.ToString(_dateFormat);
                 if (_currentStream.CurrentDateStr != dateStr)
@@ -186,11 +190,17 @@ namespace Utils
                 }
 
                 //判断是否创建Archive
-                int byteCount = Encoding.UTF8.GetByteCount(log);
+                int byteCount = Encoding.UTF8.GetByteCount(log) + 2;
                 _currentStream.CurrentFileSize += byteCount;
+                if (_logCount > 10000)
+                {
+                    FileInfo fileInfo = new FileInfo(_currentStream.CurrentLogFilePath);
+                    _currentStream.CurrentFileSize = fileInfo.Length + byteCount;
+                    _logCount = 0;
+                }
                 if (_currentStream.CurrentFileSize >= _fileSize)
                 {
-                    _currentStream.CurrentFileSize = 0;
+                    _currentStream.CurrentFileSize = byteCount;
                     CreateArchive();
                 }
 

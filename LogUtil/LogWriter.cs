@@ -182,11 +182,11 @@ namespace Utils
                     }
 
                     //判断是否创建Archive
-                    int byteCount = Encoding.UTF8.GetByteCount(log);
+                    int byteCount = Encoding.UTF8.GetByteCount(log) + 2;
                     _currentStream.CurrentFileSize += byteCount;
                     if (_currentStream.CurrentFileSize >= _fileSize)
                     {
-                        _currentStream.CurrentFileSize = 0;
+                        _currentStream.CurrentFileSize = byteCount;
                         CreateArchive();
                     }
 
