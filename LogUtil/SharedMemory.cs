@@ -16,7 +16,6 @@ namespace Utils
         private string _sharedMemoryFileName;
         private MemoryMappedFile _file;
         private MemoryMappedViewAccessor _accessor;
-        private bool _hasValue = false;
 
         public SharedMemory(LogType logType)
         {
