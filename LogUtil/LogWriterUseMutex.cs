@@ -34,6 +34,8 @@ namespace Utils
 
         private int _logCount = 0;
 
+        private SharedMemory _sharedMemory;
+
         #endregion
 
         #region LogWriter
@@ -41,6 +43,7 @@ namespace Utils
         {
             _logType = logType;
             _mutex = new Mutex(false, "Mutex.LogWriter." + logType.ToString() + ".7693FFAD38004F6B8FD31F6A8B4CE2BD");
+            _sharedMemory = new SharedMemory(logType);
 
             Init();
         }
@@ -59,7 +62,9 @@ namespace Utils
             CreateLogDir();
 
             //更新日志写入流
+            _mutex.WaitOne();
             UpdateCurrentStream();
+            _mutex.ReleaseMutex();
         }
         #endregion
 
@@ -113,6 +118,7 @@ namespace Utils
         {
             FileInfo fileInfo = new FileInfo(_currentStream.CurrentLogFilePath);
             _currentStream.CurrentFileSize = fileInfo.Length;
+            _sharedMemory.Write(_currentStream.CurrentFileSize);
         }
         #endregion
 
@@ -177,7 +183,21 @@ namespace Utils
         {
             try
             {
-                _mutex.WaitOne();
+                try
+                {
+                    _mutex.WaitOne();
+                }
+                catch
+                {
+                    try
+                    {
+                        _mutex.WaitOne();
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine(ex.Message + "\r\n" + ex.StackTrace);
+                    }
+                }
 
                 _logCount++;
 
@@ -191,16 +211,15 @@ namespace Utils
 
                 //判断是否创建Archive
                 int byteCount = Encoding.UTF8.GetByteCount(log) + 2;
+
+                _currentStream.CurrentFileSize = _sharedMemory.Read();
                 _currentStream.CurrentFileSize += byteCount;
-                if (_logCount > 10000)
-                {
-                    FileInfo fileInfo = new FileInfo(_currentStream.CurrentLogFilePath);
-                    _currentStream.CurrentFileSize = fileInfo.Length + byteCount;
-                    _logCount = 0;
-                }
+                _sharedMemory.Write(_currentStream.CurrentFileSize);
+
                 if (_currentStream.CurrentFileSize >= _fileSize)
                 {
                     _currentStream.CurrentFileSize = byteCount;
+                    _sharedMemory.Write(_currentStream.CurrentFileSize);
                     CreateArchive();
                 }
 
