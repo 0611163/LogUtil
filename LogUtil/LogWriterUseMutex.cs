@@ -32,8 +32,6 @@ namespace Utils
 
         private Mutex _mutex;
 
-        private int _logCount = 0;
-
         private SharedMemory _sharedMemory;
 
         #endregion
@@ -198,8 +196,6 @@ namespace Utils
                         Console.WriteLine(ex.Message + "\r\n" + ex.StackTrace);
                     }
                 }
-
-                _logCount++;
 
                 //判断是否更新Stream
                 string dateStr = DateTime.Now.ToString(_dateFormat);
