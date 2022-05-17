@@ -260,5 +260,16 @@ namespace LogUtilTest
                 Log("LogUtil日志行数：" + count);
             });
         }
+
+        //多进程
+        private void button6_Click(object sender, EventArgs e)
+        {
+            for (int i = 0; i < 3; i++)
+            {
+                Process process = new Process();
+                process.StartInfo.FileName = "LogUtil.Test2.exe";
+                process.Start();
+            }
+        }
     }
 }

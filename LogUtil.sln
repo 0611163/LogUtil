@@ -9,6 +9,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LogUtil.Test", "LogUtil.Tes
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LogUtil.Test2", "LogUtil.Test2\LogUtil.Test2.csproj", "{B22D4B74-635E-4757-938C-4845CC077732}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LogUtil.Test3", "LogUtil.Test3\LogUtil.Test3.csproj", "{EE3AD70D-C091-4397-8A1F-B3B77A14333F}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,6 +29,10 @@ Global
 		{B22D4B74-635E-4757-938C-4845CC077732}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B22D4B74-635E-4757-938C-4845CC077732}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B22D4B74-635E-4757-938C-4845CC077732}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EE3AD70D-C091-4397-8A1F-B3B77A14333F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EE3AD70D-C091-4397-8A1F-B3B77A14333F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EE3AD70D-C091-4397-8A1F-B3B77A14333F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EE3AD70D-C091-4397-8A1F-B3B77A14333F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
