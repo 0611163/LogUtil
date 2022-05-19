@@ -35,7 +35,6 @@ namespace Utils
         public void Write(long currentFileSize)
         {
             _accessor.Write(0, currentFileSize);
-            _accessor.Flush();
         }
 
         public long Read()
