@@ -60,9 +60,7 @@ namespace Utils
             CreateLogDir();
 
             //更新日志写入流
-            _mutex.WaitOne();
             UpdateCurrentStream();
-            _mutex.ReleaseMutex();
         }
         #endregion
 
@@ -140,8 +138,13 @@ namespace Utils
         /// </summary>
         private void CreateStream()
         {
-            _currentStream.CurrentFileStream = new FileStream(_currentStream.CurrentLogFilePath, FileMode.OpenOrCreate, FileAccess.Write, FileShare.ReadWrite);
-            _currentStream.CurrentStreamWriter = new StreamWriter(_currentStream.CurrentFileStream, Encoding.UTF8);
+            _currentStream.CurrentFileStream = new FileStream(
+                _currentStream.CurrentLogFilePath,
+                FileMode.Append,
+                System.Security.AccessControl.FileSystemRights.AppendData | System.Security.AccessControl.FileSystemRights.Synchronize,
+                FileShare.ReadWrite,
+                1,
+                FileOptions.None);
         }
         #endregion
 
@@ -151,11 +154,6 @@ namespace Utils
         /// </summary>
         private void CloseStream()
         {
-            if (_currentStream.CurrentStreamWriter != null)
-            {
-                _currentStream.CurrentStreamWriter.Close();
-            }
-
             if (_currentStream.CurrentFileStream != null)
             {
                 _currentStream.CurrentFileStream.Close();
@@ -169,7 +167,7 @@ namespace Utils
         /// </summary>
         private static string CreateLogString(LogType logType, string log)
         {
-            return string.Format(@"{0} {1} {2}", DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff"), ("[" + logType.ToString() + "]").PadRight(7, ' '), log);
+            return string.Format("{0} {1} {2}\r\n", DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff"), ("[" + logType.ToString() + "]").PadRight(7, ' '), log);
         }
         #endregion
 
@@ -179,24 +177,10 @@ namespace Utils
         /// </summary>
         private void WriteFile(string log)
         {
+            byte[] bArr = null;
+
             try
             {
-                try
-                {
-                    _mutex.WaitOne();
-                }
-                catch
-                {
-                    try
-                    {
-                        _mutex.WaitOne();
-                    }
-                    catch (Exception ex)
-                    {
-                        Console.WriteLine(ex.Message + "\r\n" + ex.StackTrace);
-                    }
-                }
-
                 //判断是否更新Stream
                 string dateStr = DateTime.Now.ToString(_dateFormat);
                 if (_currentStream.CurrentDateStr != dateStr)
@@ -205,8 +189,17 @@ namespace Utils
                     UpdateCurrentStream();
                 }
 
+                try
+                {
+                    _mutex.WaitOne();
+                }
+                catch (AbandonedMutexException)
+                {
+                }
+
                 //判断是否创建Archive
-                int byteCount = Encoding.UTF8.GetByteCount(log) + 2;
+                bArr = Encoding.UTF8.GetBytes(log);
+                int byteCount = bArr.Length;
 
                 _currentStream.CurrentFileSize = _sharedMemory.Read();
                 _currentStream.CurrentFileSize += byteCount;
@@ -218,12 +211,6 @@ namespace Utils
                     _sharedMemory.Write(_currentStream.CurrentFileSize);
                     CreateArchive();
                 }
-
-                //日志内容写入文件
-                _currentStream.CurrentFileStream.Seek(0, SeekOrigin.End);
-                _currentStream.CurrentStreamWriter.WriteLine(log);
-                _currentStream.CurrentStreamWriter.Flush();
-
             }
             catch (Exception ex)
             {
@@ -232,6 +219,19 @@ namespace Utils
             finally
             {
                 _mutex.ReleaseMutex();
+            }
+
+            try
+            {
+                //日志内容写入文件
+                if (bArr != null)
+                {
+                    _currentStream.CurrentFileStream.Write(bArr, 0, bArr.Length);
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message + "\r\n" + ex.StackTrace);
             }
         }
         #endregion
@@ -281,6 +281,14 @@ namespace Utils
         {
             try
             {
+                try
+                {
+                    _mutex.WaitOne();
+                }
+                catch (AbandonedMutexException)
+                {
+                }
+
                 //关闭日志写入流
                 CloseStream();
 
@@ -301,6 +309,10 @@ namespace Utils
             catch (Exception ex)
             {
                 Console.WriteLine(ex.Message + "\r\n" + ex.StackTrace);
+            }
+            finally
+            {
+                _mutex.ReleaseMutex();
             }
         }
         #endregion
