@@ -271,5 +271,16 @@ namespace LogUtilTest
                 process.Start();
             }
         }
+
+        //多进程
+        private void button7_Click(object sender, EventArgs e)
+        {
+            for (int i = 0; i < 3; i++)
+            {
+                Process process = new Process();
+                process.StartInfo.FileName = "LogUtil.Test3.exe";
+                process.Start();
+            }
+        }
     }
 }
