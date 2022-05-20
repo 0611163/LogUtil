@@ -211,7 +211,7 @@ namespace Utils
             string fileName = Path.GetFileNameWithoutExtension(_currentStream.CurrentLogFilePath);
 
             CloseStream(); //关闭日志写入流
-            File.Move(_currentStream.CurrentLogFilePath, Path.Combine(_currentStream.CurrentLogFileDir, fileName + "_" + (++_currentStream.CurrentArchiveIndex) + ".txt")); //存档
+            File.Move(_currentStream.CurrentLogFilePath, Path.Combine(_currentStream.CurrentLogFileDir, fileName + "_" + (_currentStream.CurrentArchiveIndex++) + ".txt")); //存档
             CreateStream(); //创建日志写入流
         }
         #endregion

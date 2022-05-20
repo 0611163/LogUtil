@@ -237,7 +237,7 @@ namespace Utils
                 CloseStream(); //关闭日志写入流
 
                 string fileName = Path.GetFileNameWithoutExtension(_currentStream.CurrentLogFilePath);
-                string newFilePath = Path.Combine(_currentStream.CurrentLogFileDir, fileName + "_" + (++_currentStream.CurrentArchiveIndex) + ".txt");
+                string newFilePath = Path.Combine(_currentStream.CurrentLogFileDir, fileName + "_" + (_currentStream.CurrentArchiveIndex++) + ".txt");
 
                 if (!File.Exists(newFilePath))
                 {
