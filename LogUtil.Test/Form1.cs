@@ -282,5 +282,34 @@ namespace LogUtilTest
                 process.Start();
             }
         }
+
+        //计算NLog日志行数
+        private void button8_Click(object sender, EventArgs e)
+        {
+            TaskRun(() =>
+            {
+                UriBuilder uri = new UriBuilder(Assembly.GetExecutingAssembly().CodeBase);
+                string basePath = Path.GetDirectoryName(Uri.UnescapeDataString(uri.Path));
+
+                int count = 0;
+                foreach (string file in Directory.GetFiles(basePath + "\\nlog", "*", SearchOption.AllDirectories))
+                {
+                    if (File.Exists(file))
+                    {
+                        using (FileStream fs = new FileStream(file, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
+                        {
+                            using (StreamReader sr = new StreamReader(fs))
+                            {
+                                while (!string.IsNullOrWhiteSpace(sr.ReadLine()))
+                                {
+                                    count++;
+                                }
+                            }
+                        }
+                    }
+                }
+                Log("LogUtil日志行数：" + count);
+            });
+        }
     }
 }
