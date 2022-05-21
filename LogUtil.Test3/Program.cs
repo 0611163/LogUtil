@@ -13,7 +13,7 @@ namespace LogUtil.Test3
     {
         private static Logger _log = NLog.LogManager.GetCurrentClassLogger();
 
-        private static int n = 300000;
+        private static int n = 100000;
 
         static void Main(string[] args)
         {
@@ -30,7 +30,7 @@ namespace LogUtil.Test3
                 {
                     for (int i = 0; i < n; i++)
                     {
-                        _log.Info("测试日志 " + i.ToString("000000"));
+                        _log.Debug("测试日志 " + i.ToString("000000"));
                         Interlocked.Increment(ref taskCount);
                     }
                 });
@@ -50,7 +50,7 @@ namespace LogUtil.Test3
                 {
                     for (int i = 0; i < n; i++)
                     {
-                        _log.Error("测试日志 " + i.ToString("000000"));
+                        _log.Debug("测试日志 " + i.ToString("000000"));
                         Interlocked.Increment(ref taskCount);
                     }
                 });

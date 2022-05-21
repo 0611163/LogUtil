@@ -23,7 +23,7 @@ namespace LogUtilTest
 
         private log4net.ILog _log2 = null;
 
-        private int n = 300000;
+        private int n = 100000;
 
         public Form1()
         {
@@ -97,7 +97,7 @@ namespace LogUtilTest
                 {
                     for (int i = 0; i < n; i++)
                     {
-                        LogUtil.Log("测试日志 " + i.ToString("000000"));
+                        LogUtil.Debug("测试日志 " + i.ToString("000000"));
                         Interlocked.Increment(ref taskCount);
                     }
                 });
@@ -117,7 +117,7 @@ namespace LogUtilTest
                 {
                     for (int i = 0; i < n; i++)
                     {
-                        LogUtil.Error("测试日志 " + i.ToString("000000"));
+                        LogUtil.Debug("测试日志 " + i.ToString("000000"));
                         Interlocked.Increment(ref taskCount);
                     }
                 });
@@ -147,7 +147,7 @@ namespace LogUtilTest
                 {
                     for (int i = 0; i < n; i++)
                     {
-                        _log.Info("测试日志 " + i.ToString("000000"));
+                        _log.Debug("测试日志 " + i.ToString("000000"));
                         Interlocked.Increment(ref taskCount);
                     }
                 });
@@ -167,7 +167,7 @@ namespace LogUtilTest
                 {
                     for (int i = 0; i < n; i++)
                     {
-                        _log.Error("测试日志 " + i.ToString("000000"));
+                        _log.Debug("测试日志 " + i.ToString("000000"));
                         Interlocked.Increment(ref taskCount);
                     }
                 });
@@ -197,7 +197,7 @@ namespace LogUtilTest
                 {
                     for (int i = 0; i < n; i++)
                     {
-                        _log2.Info("测试日志 " + i.ToString("000000"));
+                        _log2.Debug("测试日志 " + i.ToString("000000"));
                         Interlocked.Increment(ref taskCount);
                     }
                 });
@@ -217,7 +217,7 @@ namespace LogUtilTest
                 {
                     for (int i = 0; i < n; i++)
                     {
-                        _log2.Error("测试日志 " + i.ToString("000000"));
+                        _log2.Debug("测试日志 " + i.ToString("000000"));
                         Interlocked.Increment(ref taskCount);
                     }
                 });
@@ -239,19 +239,23 @@ namespace LogUtilTest
             {
                 UriBuilder uri = new UriBuilder(Assembly.GetExecutingAssembly().CodeBase);
                 string basePath = Path.GetDirectoryName(Uri.UnescapeDataString(uri.Path));
+                string dirPath = basePath + "\\Log";
 
                 int count = 0;
-                foreach (string file in Directory.GetFiles(basePath + "\\Log", "*", SearchOption.AllDirectories))
+                if (Directory.Exists(dirPath))
                 {
-                    if (File.Exists(file))
+                    foreach (string file in Directory.GetFiles(dirPath, "*", SearchOption.AllDirectories))
                     {
-                        using (FileStream fs = new FileStream(file, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
+                        if (File.Exists(file))
                         {
-                            using (StreamReader sr = new StreamReader(fs))
+                            using (FileStream fs = new FileStream(file, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
                             {
-                                while (!string.IsNullOrWhiteSpace(sr.ReadLine()))
+                                using (StreamReader sr = new StreamReader(fs))
                                 {
-                                    count++;
+                                    while (!string.IsNullOrWhiteSpace(sr.ReadLine()))
+                                    {
+                                        count++;
+                                    }
                                 }
                             }
                         }
@@ -290,19 +294,23 @@ namespace LogUtilTest
             {
                 UriBuilder uri = new UriBuilder(Assembly.GetExecutingAssembly().CodeBase);
                 string basePath = Path.GetDirectoryName(Uri.UnescapeDataString(uri.Path));
+                string dirPath = basePath + "\\nlog";
 
                 int count = 0;
-                foreach (string file in Directory.GetFiles(basePath + "\\nlog", "*", SearchOption.AllDirectories))
+                if (Directory.Exists(dirPath))
                 {
-                    if (File.Exists(file))
+                    foreach (string file in Directory.GetFiles(dirPath, "*", SearchOption.AllDirectories))
                     {
-                        using (FileStream fs = new FileStream(file, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
+                        if (File.Exists(file))
                         {
-                            using (StreamReader sr = new StreamReader(fs))
+                            using (FileStream fs = new FileStream(file, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
                             {
-                                while (!string.IsNullOrWhiteSpace(sr.ReadLine()))
+                                using (StreamReader sr = new StreamReader(fs))
                                 {
-                                    count++;
+                                    while (!string.IsNullOrWhiteSpace(sr.ReadLine()))
+                                    {
+                                        count++;
+                                    }
                                 }
                             }
                         }

@@ -11,7 +11,7 @@ namespace LogUtilTest
 {
     class Program
     {
-        private static int n = 300000;
+        private static int n = 100000;
 
         static void Main(string[] args)
         {
@@ -28,7 +28,7 @@ namespace LogUtilTest
                 {
                     for (int i = 0; i < n; i++)
                     {
-                        LogUtilUseMutex.Log("测试日志 " + i.ToString("000000"));
+                        LogUtilUseMutex.Debug("测试日志 " + i.ToString("000000"));
                         Interlocked.Increment(ref taskCount);
                     }
                 });
@@ -48,7 +48,7 @@ namespace LogUtilTest
                 {
                     for (int i = 0; i < n; i++)
                     {
-                        LogUtilUseMutex.Error("测试日志 " + i.ToString("000000"));
+                        LogUtilUseMutex.Debug("测试日志 " + i.ToString("000000"));
                         Interlocked.Increment(ref taskCount);
                     }
                 });
