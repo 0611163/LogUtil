@@ -316,7 +316,7 @@ namespace LogUtilTest
                         }
                     }
                 }
-                Log("LogUtil日志行数：" + count);
+                Log("NLog日志行数：" + count);
             });
         }
     }
