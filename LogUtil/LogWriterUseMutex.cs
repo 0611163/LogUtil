@@ -211,9 +211,6 @@ namespace Utils
                     _sharedMemory.Write(_currentStream.CurrentFileSize);
                     CreateArchive();
                 }
-
-                //日志内容写入文件
-                _currentStream.CurrentFileStream.Write(bArr, 0, bArr.Length);
             }
             catch (Exception ex)
             {
@@ -222,6 +219,22 @@ namespace Utils
             finally
             {
                 _mutex.ReleaseMutex();
+            }
+
+            try
+            {
+                //日志内容写入文件
+                if (bArr != null)
+                {
+                    _currentStream.CurrentFileStream.Write(bArr, 0, bArr.Length);
+                }
+            }
+            catch (Exception ex)
+            {
+                WriteFile(log);
+
+                Console.WriteLine(ex.Message + "\r\n" + ex.StackTrace);
+                Console.WriteLine("日志写入失败，重新写入：" + log);
             }
         }
         #endregion
