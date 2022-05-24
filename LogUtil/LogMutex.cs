@@ -14,15 +14,15 @@ namespace Utils
     /// <summary>
     /// 写日志类 支持多进程并发
     /// </summary>
-    public class LogUtilUseMutex
+    public class LogMutex
     {
         #region 字段
 
-        private static LogWriterUseMutex _infoWriter = new LogWriterUseMutex(LogType.Info);
+        private static LogWriterMutex _infoWriter = new LogWriterMutex(LogType.Info);
 
-        private static LogWriterUseMutex _debugWriter = new LogWriterUseMutex(LogType.Debug);
+        private static LogWriterMutex _debugWriter = new LogWriterMutex(LogType.Debug);
 
-        private static LogWriterUseMutex _errorWriter = new LogWriterUseMutex(LogType.Error);
+        private static LogWriterMutex _errorWriter = new LogWriterMutex(LogType.Error);
 
         #endregion
 

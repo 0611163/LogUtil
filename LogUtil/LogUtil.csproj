@@ -43,9 +43,9 @@
     <Compile Include="LogStream.cs" />
     <Compile Include="LogType.cs" />
     <Compile Include="LogUtil.cs" />
-    <Compile Include="LogUtilUseMutex.cs" />
+    <Compile Include="LogMutex.cs" />
     <Compile Include="LogWriter.cs" />
-    <Compile Include="LogWriterUseMutex.cs" />
+    <Compile Include="LogWriterMutex.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SharedMemory.cs" />
   </ItemGroup>

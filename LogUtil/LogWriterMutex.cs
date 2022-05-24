@@ -14,7 +14,7 @@ namespace Utils
     /// <summary>
     /// 支持多进程并发写日志的LogWriter版本
     /// </summary>
-    internal class LogWriterUseMutex
+    internal class LogWriterMutex
     {
         #region 字段属性
 
@@ -37,7 +37,7 @@ namespace Utils
         #endregion
 
         #region LogWriter
-        public LogWriterUseMutex(LogType logType)
+        public LogWriterMutex(LogType logType)
         {
             _logType = logType;
             _mutex = new Mutex(false, "Mutex.LogWriter." + logType.ToString() + ".7693FFAD38004F6B8FD31F6A8B4CE2BD");

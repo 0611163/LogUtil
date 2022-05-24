@@ -28,7 +28,7 @@ namespace LogUtilTest
                 {
                     for (int i = 0; i < n; i++)
                     {
-                        LogUtilUseMutex.Debug("测试日志 " + i.ToString("000000"));
+                        LogMutex.Debug("测试日志 " + i.ToString("000000"));
                         Interlocked.Increment(ref taskCount);
                     }
                 });
@@ -38,7 +38,7 @@ namespace LogUtilTest
                 {
                     for (int i = 0; i < n; i++)
                     {
-                        LogUtilUseMutex.Debug("测试日志 " + i.ToString("000000"));
+                        LogMutex.Debug("测试日志 " + i.ToString("000000"));
                         Interlocked.Increment(ref taskCount);
                     }
                 });
@@ -48,7 +48,7 @@ namespace LogUtilTest
                 {
                     for (int i = 0; i < n; i++)
                     {
-                        LogUtilUseMutex.Debug("测试日志 " + i.ToString("000000"));
+                        LogMutex.Debug("测试日志 " + i.ToString("000000"));
                         Interlocked.Increment(ref taskCount);
                     }
                 });
