@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<package >
+  <metadata>
+    <id>$id$</id>
+    <version>1.0.1</version>
+    <title>LogUtil</title>
+    <authors>suxiang</authors>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <license type="expression">MIT</license>
+    <!-- <icon>icon.png</icon> -->
+    <projectUrl>https://github.com/0611163/LogUtil</projectUrl>
+    <description>A log writing class library that supports multiple processes</description>
+    <releaseNotes>Fix bug of previous version</releaseNotes>
+    <copyright>Copyright @ 2022</copyright>
+    <tags></tags>
+  </metadata>
+</package>
