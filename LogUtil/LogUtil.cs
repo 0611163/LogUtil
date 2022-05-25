@@ -60,7 +60,7 @@ namespace Utils
         /// </summary>
         public static void Error(Exception ex, string log = null)
         {
-            Error(string.IsNullOrEmpty(log) ? ex.Message + "\r\n" + ex.StackTrace : (log + "：") + ex.Message + "\r\n" + ex.StackTrace);
+            Error(string.IsNullOrEmpty(log) ? ex.ToString() : log + "：" + ex.ToString());
         }
 
         /// <summary>
@@ -68,7 +68,7 @@ namespace Utils
         /// </summary>
         public static void Error(string log, Exception ex)
         {
-            Error(string.IsNullOrEmpty(log) ? ex.Message + "\r\n" + ex.StackTrace : (log + "：") + ex.Message + "\r\n" + ex.StackTrace);
+            Error(string.IsNullOrEmpty(log) ? ex.ToString() : log + "：" + ex.ToString());
         }
 
         /// <summary>
