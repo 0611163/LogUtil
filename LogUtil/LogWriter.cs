@@ -29,6 +29,8 @@ namespace Utils
 
         private object _lockWriter = new object();
 
+        private DateTime _lastCheckFileExistsTime = DateTime.Now;
+
         #endregion
 
         #region LogWriter
@@ -130,7 +132,7 @@ namespace Utils
         /// </summary>
         private void CreateStream()
         {
-            _currentStream.CurrentFileStream = new FileStream(_currentStream.CurrentLogFilePath, FileMode.Append, FileAccess.Write, FileShare.ReadWrite);
+            _currentStream.CurrentFileStream = new FileStream(_currentStream.CurrentLogFilePath, FileMode.Append, FileAccess.Write, FileShare.ReadWrite | FileShare.Delete);
             _currentStream.CurrentStreamWriter = new StreamWriter(_currentStream.CurrentFileStream, Encoding.UTF8);
         }
         #endregion
@@ -179,6 +181,16 @@ namespace Utils
                     {
                         _currentStream.CurrentDateStr = dateStr;
                         UpdateCurrentStream();
+                    }
+
+                    //判断文件是否存在
+                    if (DateTime.Now.Subtract(_lastCheckFileExistsTime).TotalMilliseconds > 500)
+                    {
+                        _lastCheckFileExistsTime = DateTime.Now;
+                        if (!File.Exists(_currentStream.CurrentLogFilePath))
+                        {
+                            UpdateCurrentStream();
+                        }
                     }
 
                     //判断是否创建Archive

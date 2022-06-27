@@ -34,6 +34,8 @@ namespace Utils
 
         private SharedMemory _sharedMemory;
 
+        private DateTime _lastCheckFileExistsTime = DateTime.Now;
+
         #endregion
 
         #region LogWriter
@@ -142,7 +144,7 @@ namespace Utils
                 _currentStream.CurrentLogFilePath,
                 FileMode.Append,
                 System.Security.AccessControl.FileSystemRights.AppendData | System.Security.AccessControl.FileSystemRights.Synchronize,
-                FileShare.ReadWrite,
+                FileShare.ReadWrite | FileShare.Delete,
                 1,
                 FileOptions.None);
         }
@@ -187,6 +189,16 @@ namespace Utils
                 {
                     _currentStream.CurrentDateStr = dateStr;
                     UpdateCurrentStream();
+                }
+
+                //判断文件是否存在
+                if (DateTime.Now.Subtract(_lastCheckFileExistsTime).TotalMilliseconds > 500)
+                {
+                    _lastCheckFileExistsTime = DateTime.Now;
+                    if (!File.Exists(_currentStream.CurrentLogFilePath))
+                    {
+                        UpdateCurrentStream();
+                    }
                 }
 
                 try
