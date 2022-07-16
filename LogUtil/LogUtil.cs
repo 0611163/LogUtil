@@ -24,6 +24,49 @@ namespace Utils
 
         private static LogWriter _errorWriter = new LogWriter(LogType.Error);
 
+        private static LogWriterMutex _infoWriterMutex = new LogWriterMutex(LogType.Info);
+
+        private static LogWriterMutex _debugWriterMutex = new LogWriterMutex(LogType.Debug);
+
+        private static LogWriterMutex _errorWriterMutex = new LogWriterMutex(LogType.Error);
+
+        private static bool _supportMultiProcess = false;
+
+        /// <summary>
+        /// 是否支持多进程
+        /// </summary>
+        public static bool SupportMultiProcess
+        {
+            get
+            {
+                return _supportMultiProcess;
+            }
+            set
+            {
+                _supportMultiProcess = value;
+
+                if (_supportMultiProcess)
+                {
+                    _infoWriter?.Dispose();
+                    _debugWriter?.Dispose();
+                    _errorWriter?.Dispose();
+
+                    _infoWriterMutex = new LogWriterMutex(LogType.Info);
+                    _debugWriterMutex = new LogWriterMutex(LogType.Debug);
+                    _errorWriterMutex = new LogWriterMutex(LogType.Error);
+                }
+            }
+        }
+
+        #endregion
+
+        #region 静态构造函数
+        static LogUtil()
+        {
+            _infoWriter = new LogWriter(LogType.Info);
+            _debugWriter = new LogWriter(LogType.Debug);
+            _errorWriter = new LogWriter(LogType.Error);
+        }
         #endregion
 
         #region 写操作日志
@@ -32,7 +75,14 @@ namespace Utils
         /// </summary>
         public static void Log(string log)
         {
-            _infoWriter.WriteLog(log);
+            if (_supportMultiProcess)
+            {
+                _infoWriterMutex.WriteLog(log);
+            }
+            else
+            {
+                _infoWriter.WriteLog(log);
+            }
         }
 
         /// <summary>
@@ -40,7 +90,14 @@ namespace Utils
         /// </summary>
         public static void Info(string log)
         {
-            _infoWriter.WriteLog(log);
+            if (_supportMultiProcess)
+            {
+                _infoWriterMutex.WriteLog(log);
+            }
+            else
+            {
+                _infoWriter.WriteLog(log);
+            }
         }
         #endregion
 
@@ -50,7 +107,14 @@ namespace Utils
         /// </summary>
         public static void Debug(string log)
         {
-            _debugWriter.WriteLog(log);
+            if (_supportMultiProcess)
+            {
+                _debugWriterMutex.WriteLog(log);
+            }
+            else
+            {
+                _debugWriter.WriteLog(log);
+            }
         }
         #endregion
 
@@ -76,7 +140,14 @@ namespace Utils
         /// </summary>
         public static void Error(string log)
         {
-            _errorWriter.WriteLog(log);
+            if (_supportMultiProcess)
+            {
+                _errorWriterMutex.WriteLog(log);
+            }
+            else
+            {
+                _errorWriter.WriteLog(log);
+            }
         }
         #endregion
 

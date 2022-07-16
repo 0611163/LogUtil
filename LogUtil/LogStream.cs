@@ -11,8 +11,6 @@ namespace Utils
     {
         public FileStream CurrentFileStream { get; set; }
 
-        public StreamWriter CurrentStreamWriter { get; set; }
-
         public int CurrentArchiveIndex { get; set; }
 
         public long CurrentFileSize { get; set; }

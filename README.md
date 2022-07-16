@@ -10,7 +10,7 @@
 
 2. 多进程，性能比NLog差一些
 
-3. 单进程请使用LogUtil，多进程请使用LogMutex
+3. 多进程请设置LogUtil.SupportMultiProcess = true;
 
 
 

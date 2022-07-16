@@ -43,7 +43,6 @@
     <Compile Include="LogStream.cs" />
     <Compile Include="LogType.cs" />
     <Compile Include="LogUtil.cs" />
-    <Compile Include="LogMutex.cs" />
     <Compile Include="LogWriter.cs" />
     <Compile Include="LogWriterMutex.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

@@ -15,6 +15,8 @@ namespace LogUtilTest
 
         static void Main(string[] args)
         {
+            LogUtil.SupportMultiProcess = true;
+
             try
             {
                 Log("==== 开始 ========");
@@ -28,7 +30,7 @@ namespace LogUtilTest
                 {
                     for (int i = 0; i < n; i++)
                     {
-                        LogMutex.Debug("测试日志 " + i.ToString("000000"));
+                        LogUtil.Debug("测试日志 " + i.ToString("000000"));
                         Interlocked.Increment(ref taskCount);
                     }
                 });
@@ -38,7 +40,7 @@ namespace LogUtilTest
                 {
                     for (int i = 0; i < n; i++)
                     {
-                        LogMutex.Debug("测试日志 " + i.ToString("000000"));
+                        LogUtil.Debug("测试日志 " + i.ToString("000000"));
                         Interlocked.Increment(ref taskCount);
                     }
                 });
@@ -48,7 +50,7 @@ namespace LogUtilTest
                 {
                     for (int i = 0; i < n; i++)
                     {
-                        LogMutex.Debug("测试日志 " + i.ToString("000000"));
+                        LogUtil.Debug("测试日志 " + i.ToString("000000"));
                         Interlocked.Increment(ref taskCount);
                     }
                 });

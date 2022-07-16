@@ -161,6 +161,16 @@ namespace Utils
         }
         #endregion
 
+        #region Dispose 释放资源
+        public void Dispose()
+        {
+            CloseStream();
+
+            _currentStream.CurrentFileStream = null;
+            _currentStream = null;
+        }
+        #endregion
+
         #region 拼接日志内容
         /// <summary>
         /// 拼接日志内容

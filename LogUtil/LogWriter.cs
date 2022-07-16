@@ -133,7 +133,6 @@ namespace Utils
         private void CreateStream()
         {
             _currentStream.CurrentFileStream = new FileStream(_currentStream.CurrentLogFilePath, FileMode.Append, FileAccess.Write, FileShare.ReadWrite | FileShare.Delete);
-            _currentStream.CurrentStreamWriter = new StreamWriter(_currentStream.CurrentFileStream, Encoding.UTF8);
         }
         #endregion
 
@@ -143,15 +142,20 @@ namespace Utils
         /// </summary>
         private void CloseStream()
         {
-            if (_currentStream.CurrentStreamWriter != null)
-            {
-                _currentStream.CurrentStreamWriter.Close();
-            }
-
             if (_currentStream.CurrentFileStream != null)
             {
                 _currentStream.CurrentFileStream.Close();
             }
+        }
+        #endregion
+
+        #region Dispose 释放资源
+        public void Dispose()
+        {
+            CloseStream();
+
+            _currentStream.CurrentFileStream = null;
+            _currentStream = null;
         }
         #endregion
 
@@ -161,7 +165,7 @@ namespace Utils
         /// </summary>
         private static string CreateLogString(LogType logType, string log)
         {
-            return string.Format(@"{0} {1} {2}", DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff"), ("[" + logType.ToString() + "]").PadRight(7, ' '), log);
+            return string.Format("{0} {1} {2}\r\n", DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff"), ("[" + logType.ToString() + "]").PadRight(7, ' '), log);
         }
         #endregion
 
@@ -171,6 +175,8 @@ namespace Utils
         /// </summary>
         private void WriteFile(string log)
         {
+            byte[] bArr = null;
+
             try
             {
                 lock (_lockWriter)
@@ -194,7 +200,8 @@ namespace Utils
                     }
 
                     //判断是否创建Archive
-                    int byteCount = Encoding.UTF8.GetByteCount(log) + 2;
+                    bArr = Encoding.UTF8.GetBytes(log);
+                    int byteCount = bArr.Length;
                     _currentStream.CurrentFileSize += byteCount;
                     if (_currentStream.CurrentFileSize >= _fileSize)
                     {
@@ -203,8 +210,8 @@ namespace Utils
                     }
 
                     //日志内容写入文件
-                    _currentStream.CurrentStreamWriter.WriteLine(log);
-                    _currentStream.CurrentStreamWriter.Flush();
+                    _currentStream.CurrentFileStream.Write(bArr, 0, bArr.Length);
+                    _currentStream.CurrentFileStream.Flush();
                 }
             }
             catch (Exception ex)
