@@ -1,15 +1,16 @@
 # LogUtil
+
 一个简单的日志工具类，无需配置，不依赖第三方库
 
 集成了NLog和log4net，以便于对比测试
 
 ## 结论
 
-1. 单进程，不论是单线程还是多线程，忽略掉误差，LogUtil和NLog一样快，都比log4net快一倍
+1. 单进程，性能和NLog差不多
 
-2. 多进程，LogUtilUseMutex经过优化比NLog略慢一点，log4net未测试
+2. 多进程，性能比NLog差一些
 
-3. 综上，单进程程序，建议使用LogUtil，多进程程序建议使用LogUtilUseMutex
+3. 单进程请使用LogUtil，多进程请使用LogMutex
 
 
 

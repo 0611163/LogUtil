@@ -142,11 +142,9 @@ namespace Utils
         {
             _currentStream.CurrentFileStream = new FileStream(
                 _currentStream.CurrentLogFilePath,
-                FileMode.Append,
-                System.Security.AccessControl.FileSystemRights.AppendData | System.Security.AccessControl.FileSystemRights.Synchronize,
-                FileShare.ReadWrite | FileShare.Delete,
-                1,
-                FileOptions.None);
+                FileMode.OpenOrCreate,
+                FileAccess.ReadWrite,
+                FileShare.ReadWrite | FileShare.Delete);
         }
         #endregion
 
@@ -225,7 +223,9 @@ namespace Utils
                 }
 
                 //日志内容写入文件
+                _currentStream.CurrentFileStream.Seek(0, SeekOrigin.End);
                 _currentStream.CurrentFileStream.Write(bArr, 0, bArr.Length);
+                _currentStream.CurrentFileStream.Flush();
             }
             catch (Exception ex)
             {
