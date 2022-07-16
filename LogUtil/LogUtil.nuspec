@@ -2,7 +2,7 @@
 <package >
   <metadata>
     <id>$id$</id>
-    <version>1.0.2</version>
+    <version>1.0.4</version>
     <title>LogUtil</title>
     <authors>suxiang</authors>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
@@ -10,7 +10,7 @@
     <!-- <icon>icon.png</icon> -->
     <projectUrl>https://github.com/0611163/LogUtil</projectUrl>
     <description>A log writing class library that supports multiple processes</description>
-    <releaseNotes>Fix bug of previous version</releaseNotes>
+    <releaseNotes>some modify</releaseNotes>
     <copyright>Copyright @ 2022</copyright>
     <tags></tags>
   </metadata>
