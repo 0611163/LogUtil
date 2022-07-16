@@ -12,6 +12,10 @@
 
 ## 如何使用
 
+### NuGet
+
+[https://www.nuget.org/packages/LogUtil](https://www.nuget.org/packages/LogUtil)
+
 ### 单进程
 
 ```C#
