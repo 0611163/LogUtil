@@ -51,9 +51,6 @@ namespace Utils
             //初始化 _basePath
             InitBasePath();
 
-            //创建目录
-            CreateLogDir();
-
             //更新日志写入流
             UpdateCurrentStream();
         }
@@ -243,6 +240,9 @@ namespace Utils
         {
             try
             {
+                //创建目录
+                CreateLogDir();
+
                 //关闭日志写入流
                 CloseStream();
 
