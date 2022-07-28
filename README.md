@@ -6,9 +6,9 @@
 
 ## 性能
 
-1. 单进程，性能和NLog差不多
+1. 单进程，Windows下性能和NLog差不多，Linux下性能比NLog好
 
-2. 多进程，性能不如NLog
+2. 多进程，Windows下性能不如NLog，Linux下性能和NLog差不多
 
 ## 如何使用
 
