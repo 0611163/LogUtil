@@ -32,9 +32,9 @@ namespace Utils
 
         private Mutex _mutex;
 
-        private SharedMemory _sharedMemory;
-
         private DateTime _lastCheckFileExistsTime = DateTime.Now;
+
+        private DateTime _lastReadFileSizeTime = DateTime.Now;
 
         #endregion
 
@@ -42,8 +42,7 @@ namespace Utils
         public LogWriterMutex(LogType logType)
         {
             _logType = logType;
-            _mutex = new Mutex(false, "Mutex.LogWriter." + logType.ToString() + ".7693FFAD38004F6B8FD31F6A8B4CE2BD");
-            _sharedMemory = new SharedMemory(logType);
+            _mutex = new Mutex(false, "Global\\Mutex.LogWriter." + logType.ToString() + ".7693FFAD38004F6B8FD31F6A8B4CE2BD");
 
             Init();
         }
@@ -70,7 +69,7 @@ namespace Utils
         private void InitBasePath()
         {
             UriBuilder uri = new UriBuilder(Assembly.GetExecutingAssembly().CodeBase);
-            _basePath = Path.GetDirectoryName(Uri.UnescapeDataString(uri.Path));
+            _basePath = Path.GetDirectoryName(Uri.UnescapeDataString(uri.Path)).Replace("\\", "/");
         }
         #endregion
 
@@ -80,6 +79,7 @@ namespace Utils
         /// </summary>
         private void InitCurrentArchiveIndex()
         {
+            _currentStream.CurrentArchiveIndex = -1;
             Regex regex = new Regex(_currentStream.CurrentDateStr + "_*(\\d*).txt");
             string[] fileArr = Directory.GetFiles(_currentStream.CurrentLogFileDir, _currentStream.CurrentDateStr + "*");
             foreach (string file in fileArr)
@@ -96,10 +96,6 @@ namespace Utils
                             _currentStream.CurrentArchiveIndex = temp;
                         }
                     }
-                    else
-                    {
-                        _currentStream.CurrentArchiveIndex = -1;
-                    }
                 }
             }
         }
@@ -113,7 +109,6 @@ namespace Utils
         {
             FileInfo fileInfo = new FileInfo(_currentStream.CurrentLogFilePath);
             _currentStream.CurrentFileSize = fileInfo.Length;
-            _sharedMemory.Write(_currentStream.CurrentFileSize);
         }
         #endregion
 
@@ -123,7 +118,7 @@ namespace Utils
         /// </summary>
         private void CreateLogDir()
         {
-            string logDir = Path.Combine(_basePath, _rootFolder + "\\" + _logType.ToString());
+            string logDir = PathCombine(_basePath, _rootFolder + "/" + _logType.ToString());
             if (!Directory.Exists(logDir))
             {
                 Directory.CreateDirectory(logDir);
@@ -184,8 +179,6 @@ namespace Utils
         /// </summary>
         private void WriteFile(string log)
         {
-            byte[] bArr = null;
-
             try
             {
                 //判断是否更新Stream
@@ -214,18 +207,25 @@ namespace Utils
                 {
                 }
 
+                //读取文件大小
+                if (DateTime.Now.Subtract(_lastReadFileSizeTime).TotalMilliseconds > 100)
+                {
+                    _lastReadFileSizeTime = DateTime.Now;
+                    if (File.Exists(_currentStream.CurrentLogFilePath))
+                    {
+                        _currentStream.CurrentFileSize = new FileInfo(_currentStream.CurrentLogFilePath).Length;
+                    }
+                }
+
                 //判断是否创建Archive
-                bArr = Encoding.UTF8.GetBytes(log);
+                byte[] bArr = Encoding.UTF8.GetBytes(log);
                 int byteCount = bArr.Length;
 
-                _currentStream.CurrentFileSize = _sharedMemory.Read();
                 _currentStream.CurrentFileSize += byteCount;
-                _sharedMemory.Write(_currentStream.CurrentFileSize);
 
                 if (_currentStream.CurrentFileSize >= _fileSize)
                 {
                     _currentStream.CurrentFileSize = byteCount;
-                    _sharedMemory.Write(_currentStream.CurrentFileSize);
                     CreateArchive();
                 }
 
@@ -256,7 +256,7 @@ namespace Utils
                 CloseStream(); //关闭日志写入流
 
                 string fileName = Path.GetFileNameWithoutExtension(_currentStream.CurrentLogFilePath);
-                string newFilePath = Path.Combine(_currentStream.CurrentLogFileDir, fileName + "_" + (++_currentStream.CurrentArchiveIndex) + ".txt");
+                string newFilePath = PathCombine(_currentStream.CurrentLogFileDir, fileName + "_" + (++_currentStream.CurrentArchiveIndex) + ".txt");
 
                 if (!File.Exists(newFilePath))
                 {
@@ -306,8 +306,8 @@ namespace Utils
 
                 //创建新的日志路径
                 _currentStream.CurrentDateStr = DateTime.Now.ToString(_dateFormat);
-                _currentStream.CurrentLogFileDir = Path.Combine(_basePath, _rootFolder + "\\" + _logType.ToString());
-                _currentStream.CurrentLogFilePath = Path.Combine(_currentStream.CurrentLogFileDir, _currentStream.CurrentDateStr + ".txt");
+                _currentStream.CurrentLogFileDir = PathCombine(_basePath, _rootFolder + "/" + _logType.ToString());
+                _currentStream.CurrentLogFilePath = PathCombine(_currentStream.CurrentLogFileDir, _currentStream.CurrentDateStr + ".txt");
 
                 //创建日志写入流
                 CreateStream();
@@ -345,6 +345,16 @@ namespace Utils
             {
                 Console.WriteLine(ex.Message + "\r\n" + ex.StackTrace);
             }
+        }
+        #endregion
+
+        #region PathCombine
+        /// <summary>
+        /// Path.Combine反斜杠替换为正斜杠
+        /// </summary>
+        private String PathCombine(params string[] paths)
+        {
+            return Path.Combine(paths).Replace("\\", "/");
         }
         #endregion
 

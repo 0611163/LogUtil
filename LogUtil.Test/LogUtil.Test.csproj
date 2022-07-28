@@ -106,7 +106,7 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\LogUtil\LogUtil.csproj">
-      <Project>{88b38a58-3f60-428e-9070-7e998952e625}</Project>
+      <Project>{ed5f316a-75bb-4367-acc1-c4fadb2b179a}</Project>
       <Name>LogUtil</Name>
     </ProjectReference>
   </ItemGroup>

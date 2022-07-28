@@ -18,17 +18,17 @@ namespace Utils
     {
         #region 字段
 
-        private static LogWriter _infoWriter = new LogWriter(LogType.Info);
+        private static LogWriter _infoWriter;
 
-        private static LogWriter _debugWriter = new LogWriter(LogType.Debug);
+        private static LogWriter _debugWriter;
 
-        private static LogWriter _errorWriter = new LogWriter(LogType.Error);
+        private static LogWriter _errorWriter;
 
-        private static LogWriterMutex _infoWriterMutex = new LogWriterMutex(LogType.Info);
+        private static LogWriterMutex _infoWriterMutex;
 
-        private static LogWriterMutex _debugWriterMutex = new LogWriterMutex(LogType.Debug);
+        private static LogWriterMutex _debugWriterMutex;
 
-        private static LogWriterMutex _errorWriterMutex = new LogWriterMutex(LogType.Error);
+        private static LogWriterMutex _errorWriterMutex;
 
         private static bool _supportMultiProcess = false;
 
@@ -50,6 +50,10 @@ namespace Utils
                     _infoWriter?.Dispose();
                     _debugWriter?.Dispose();
                     _errorWriter?.Dispose();
+
+                    _infoWriter = null;
+                    _debugWriter = null;
+                    _errorWriter = null;
 
                     _infoWriterMutex = new LogWriterMutex(LogType.Info);
                     _debugWriterMutex = new LogWriterMutex(LogType.Debug);
@@ -148,6 +152,19 @@ namespace Utils
             {
                 _errorWriter.WriteLog(log);
             }
+        }
+        #endregion
+
+        #region Dispose
+        public static void Dispose()
+        {
+            _infoWriter?.Dispose();
+            _debugWriter?.Dispose();
+            _errorWriter?.Dispose();
+
+            _infoWriterMutex?.Dispose();
+            _debugWriterMutex?.Dispose();
+            _errorWriterMutex?.Dispose();
         }
         #endregion
 
