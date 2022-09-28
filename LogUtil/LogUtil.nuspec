@@ -1,8 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
+<package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
   <metadata>
     <id>LogUtil</id>
-    <version>1.0.10</version>
+    <version>1.0.12</version>
     <title>LogUtil</title>
     <authors>suxiang</authors>
     <owners></owners>
@@ -10,27 +10,15 @@
     <license type="expression">MIT</license>
     <projectUrl>https://github.com/0611163/LogUtil</projectUrl>
     <description>A log writing class library that supports multiple processes</description>
-    <releaseNotes></releaseNotes>
+    <releaseNotes>仅修改工程目标框架TargetFrameworks</releaseNotes>
     <copyright>Copyright @ 2021</copyright>
   </metadata>
   <files>
     <file src="lib\net40\LogUtil.dll" target="lib\net40\LogUtil.dll" />
     <file src="lib\net40\LogUtil.xml" target="lib\net40\LogUtil.xml" />
-    <file src="lib\net45\LogUtil.dll" target="lib\net45\LogUtil.dll" />
-    <file src="lib\net45\LogUtil.xml" target="lib\net45\LogUtil.xml" />
-    <file src="lib\net452\LogUtil.dll" target="lib\net452\LogUtil.dll" />
-    <file src="lib\net452\LogUtil.xml" target="lib\net452\LogUtil.xml" />
-    <file src="lib\net5.0\LogUtil.dll" target="lib\net5.0\LogUtil.dll" />
-    <file src="lib\net5.0\LogUtil.xml" target="lib\net5.0\LogUtil.xml" />
     <file src="lib\net6.0\LogUtil.dll" target="lib\net6.0\LogUtil.dll" />
     <file src="lib\net6.0\LogUtil.xml" target="lib\net6.0\LogUtil.xml" />
-    <file src="lib\netcoreapp21\LogUtil.dll" target="lib\netcoreapp21\LogUtil.dll" />
-    <file src="lib\netcoreapp21\LogUtil.xml" target="lib\netcoreapp21\LogUtil.xml" />
-    <file src="lib\netcoreapp31\LogUtil.dll" target="lib\netcoreapp31\LogUtil.dll" />
-    <file src="lib\netcoreapp31\LogUtil.xml" target="lib\netcoreapp31\LogUtil.xml" />
     <file src="lib\netstandard2.0\LogUtil.dll" target="lib\netstandard2.0\LogUtil.dll" />
     <file src="lib\netstandard2.0\LogUtil.xml" target="lib\netstandard2.0\LogUtil.xml" />
-    <file src="lib\netstandard2.1\LogUtil.dll" target="lib\netstandard2.1\LogUtil.dll" />
-    <file src="lib\netstandard2.1\LogUtil.xml" target="lib\netstandard2.1\LogUtil.xml" />
   </files>
 </package>
