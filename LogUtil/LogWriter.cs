@@ -62,7 +62,7 @@ namespace Utils
         /// </summary>
         private void InitBasePath()
         {
-            UriBuilder uri = new UriBuilder(Assembly.GetExecutingAssembly().CodeBase);
+            UriBuilder uri = new UriBuilder(Assembly.GetExecutingAssembly().Location);
             _basePath = Path.GetDirectoryName(Uri.UnescapeDataString(uri.Path)).Replace("\\", "/");
         }
         #endregion
