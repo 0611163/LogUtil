@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
   <metadata>
     <id>LogUtil</id>
-    <version>1.0.12</version>
+    <version>1.0.13</version>
     <title>LogUtil</title>
     <authors>suxiang</authors>
     <owners></owners>
@@ -10,7 +10,8 @@
     <license type="expression">MIT</license>
     <projectUrl>https://github.com/0611163/LogUtil</projectUrl>
     <description>A log writing class library that supports multiple processes</description>
-    <releaseNotes>仅修改工程目标框架TargetFrameworks</releaseNotes>
+    <releaseNotes>修复不支持应用程序单文件发布的问题
+Fix the problem that application single file publishing is not supported</releaseNotes>
     <copyright>Copyright @ 2021</copyright>
   </metadata>
   <files>

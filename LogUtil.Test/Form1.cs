@@ -30,8 +30,7 @@ namespace LogUtilTest
             InitializeComponent();
             ThreadPool.SetMinThreads(20, 20);
 
-            UriBuilder uri = new UriBuilder(Assembly.GetExecutingAssembly().Location);
-            string path = Path.GetDirectoryName(Uri.UnescapeDataString(uri.Path));
+            string path = Path.GetDirectoryName(AppDomain.CurrentDomain.BaseDirectory);
             FileInfo configFile = new FileInfo(Path.Combine(path, "log4net.config"));
             log4net.Config.XmlConfigurator.Configure(configFile);
 
@@ -237,8 +236,7 @@ namespace LogUtilTest
         {
             TaskRun(() =>
             {
-                UriBuilder uri = new UriBuilder(Assembly.GetExecutingAssembly().Location);
-                string basePath = Path.GetDirectoryName(Uri.UnescapeDataString(uri.Path));
+                string basePath = Path.GetDirectoryName(AppDomain.CurrentDomain.BaseDirectory);
                 string dirPath = basePath + "\\Log";
 
                 int count = 0;
@@ -292,8 +290,7 @@ namespace LogUtilTest
         {
             TaskRun(() =>
             {
-                UriBuilder uri = new UriBuilder(Assembly.GetExecutingAssembly().Location);
-                string basePath = Path.GetDirectoryName(Uri.UnescapeDataString(uri.Path));
+                string basePath = Path.GetDirectoryName(AppDomain.CurrentDomain.BaseDirectory);
                 string dirPath = basePath + "\\nlog";
 
                 int count = 0;
