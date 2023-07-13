@@ -2,13 +2,14 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace Utils
 {
     /// <summary>
-    /// 日志类型
+    /// 日志文件类型
     /// </summary>
-    internal enum LogType
+    internal enum FileType
     {
         Debug,
 

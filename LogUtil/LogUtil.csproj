@@ -1,19 +1,26 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-	<PropertyGroup>
-		<TargetFrameworks>net40;netstandard2.0;net6.0</TargetFrameworks>
-		<ImplicitUsings>disable</ImplicitUsings>
-		<Nullable>disable</Nullable>
-		<AssemblyVersion>1.0.13</AssemblyVersion>
-		<FileVersion>1.0.13</FileVersion>
-		<Version>1.0.13</Version>
-		<GenerateDocumentationFile>True</GenerateDocumentationFile>
-	</PropertyGroup>
-
-	<ItemGroup>
-		<Compile Remove="lib\**" />
-		<EmbeddedResource Remove="lib\**" />
-		<None Remove="lib\**" />
-	</ItemGroup>
+    <PropertyGroup>
+        <TargetFrameworks>net40;netstandard2.0;net6.0</TargetFrameworks>
+        <ImplicitUsings>disable</ImplicitUsings>
+        <Nullable>disable</Nullable>
+        <GenerateDocumentationFile>True</GenerateDocumentationFile>
+        <Title>LogUtil</Title>
+        <AssemblyVersion>1.0.15</AssemblyVersion>
+        <FileVersion>1.0.15</FileVersion>
+        <Version>1.0.15</Version>
+        <PackageId>LogUtil</PackageId>
+        <PackageProjectUrl>https://github.com/0611163/LogUtil</PackageProjectUrl>
+        <PackageLicenseExpression>MIT</PackageLicenseExpression>
+        <PackageOutputPath>..\LogUtil</PackageOutputPath>
+        <Authors>suxiang</Authors>
+        <Copyright>Copyright @ 2021</Copyright>
+        <Description>
+            A lightweight logging class library that supports multiple processes.
+        </Description>
+        <PackageReleaseNotes>
+            新增功能：通过LogUtil.WriteToDebug设置写入Debug文件的日志级别；通过LogUtil.WriteToInfo设置写入Info文件的日志级别。
+        </PackageReleaseNotes>
+    </PropertyGroup>
 
 </Project>

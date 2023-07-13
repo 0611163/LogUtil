@@ -9,7 +9,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LogUtil.Test2", "LogUtil.Te
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LogUtil.Test3", "LogUtil.Test3\LogUtil.Test3.csproj", "{EE3AD70D-C091-4397-8A1F-B3B77A14333F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LogUtil", "LogUtil\LogUtil.csproj", "{ED5F316A-75BB-4367-ACC1-C4FADB2B179A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LogUtil", "LogUtil\LogUtil.csproj", "{ED5F316A-75BB-4367-ACC1-C4FADB2B179A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

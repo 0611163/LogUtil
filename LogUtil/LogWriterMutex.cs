@@ -18,7 +18,7 @@ namespace Utils
     {
         #region 字段属性
 
-        private LogType _logType;
+        private FileType _fileType;
 
         private string _basePath;
 
@@ -39,10 +39,10 @@ namespace Utils
         #endregion
 
         #region LogWriter
-        public LogWriterMutex(LogType logType)
+        public LogWriterMutex(FileType fileType)
         {
-            _logType = logType;
-            _mutex = new Mutex(false, "Global\\Mutex.LogWriter." + logType.ToString() + ".7693FFAD38004F6B8FD31F6A8B4CE2BD");
+            _fileType = fileType;
+            _mutex = new Mutex(false, "Global\\Mutex.LogWriter." + fileType.ToString() + ".7693FFAD38004F6B8FD31F6A8B4CE2BD");
 
             Init();
         }
@@ -117,7 +117,7 @@ namespace Utils
         /// </summary>
         private void CreateLogDir()
         {
-            string logDir = PathCombine(_basePath, _rootFolder + "/" + _logType.ToString());
+            string logDir = PathCombine(_basePath, _rootFolder + "/" + _fileType.ToString());
             if (!Directory.Exists(logDir))
             {
                 Directory.CreateDirectory(logDir);
@@ -168,7 +168,7 @@ namespace Utils
         /// </summary>
         private static string CreateLogString(LogType logType, string log)
         {
-            return string.Format("{0} {1} {2}\r\n", DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff"), ("[" + logType.ToString() + "]").PadRight(7, ' '), log);
+            return string.Format("{0} {1} {2}\r\n", DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff"), "[" + logType.ToString() + "]", log);
         }
         #endregion
 
@@ -305,7 +305,7 @@ namespace Utils
 
                 //创建新的日志路径
                 _currentStream.CurrentDateStr = DateTime.Now.ToString(_dateFormat);
-                _currentStream.CurrentLogFileDir = PathCombine(_basePath, _rootFolder + "/" + _logType.ToString());
+                _currentStream.CurrentLogFileDir = PathCombine(_basePath, _rootFolder + "/" + _fileType.ToString());
                 _currentStream.CurrentLogFilePath = PathCombine(_currentStream.CurrentLogFileDir, _currentStream.CurrentDateStr + ".txt");
 
                 //创建日志写入流
@@ -333,11 +333,12 @@ namespace Utils
         /// 写日志
         /// </summary>
         /// <param name="log">日志内容</param>
-        public void WriteLog(string log)
+        /// <param name="logType">日志类型</param>
+        public void WriteLog(string log, LogType logType)
         {
             try
             {
-                log = CreateLogString(_logType, log);
+                log = CreateLogString(logType, log);
                 WriteFile(log);
             }
             catch (Exception ex)

@@ -30,7 +30,7 @@ namespace LogUtilTest
                 {
                     for (int i = 0; i < n; i++)
                     {
-                        LogUtil.Debug("测试日志 " + i.ToString("000000"));
+                        LogUtil.Info("测试日志 " + i.ToString("000000"));
                         Interlocked.Increment(ref taskCount);
                     }
                 });
@@ -40,7 +40,7 @@ namespace LogUtilTest
                 {
                     for (int i = 0; i < n; i++)
                     {
-                        LogUtil.Debug("测试日志 " + i.ToString("000000"));
+                        LogUtil.Info("测试日志 " + i.ToString("000000"));
                         Interlocked.Increment(ref taskCount);
                     }
                 });
@@ -50,7 +50,7 @@ namespace LogUtilTest
                 {
                     for (int i = 0; i < n; i++)
                     {
-                        LogUtil.Debug("测试日志 " + i.ToString("000000"));
+                        LogUtil.Info("测试日志 " + i.ToString("000000"));
                         Interlocked.Increment(ref taskCount);
                     }
                 });

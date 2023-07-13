@@ -6,14 +6,15 @@ using System.Text;
 namespace Utils
 {
     /// <summary>
-    /// 日志类型
+    /// 日志级别
     /// </summary>
-    internal enum LogType
+    [Flags]
+    public enum LogLevel
     {
-        Debug,
+        Debug = 1,
 
-        Info,
+        Info = 2,
 
-        Error
+        Error = 4
     }
 }

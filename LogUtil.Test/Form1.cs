@@ -76,9 +76,17 @@ namespace LogUtilTest
 
         private void button1_Click(object sender, EventArgs e)
         {
-            LogUtil.Log("测试写 Info 日志");
-            LogUtil.Debug("测试写 Debug 日志");
-            LogUtil.Error("测试写 Error 日志");
+            Log("==== 开始 ========");
+            Stopwatch stopwatch = Stopwatch.StartNew();
+            LogUtil.Debug("该日志只写入 Debug 文件");
+            LogUtil.Log("该日志只写入 Info 文件");
+            LogUtil.Error("该日志只写入 Error 文件");
+            LogUtil.WriteToDebug = Utils.LogLevel.Debug | Utils.LogLevel.Info | Utils.LogLevel.Error;
+            LogUtil.WriteToInfo = Utils.LogLevel.Info | Utils.LogLevel.Error;
+            LogUtil.Debug("这是一条 Debug 日志");
+            LogUtil.Log("这是一条 Info 日志");
+            LogUtil.Error("这是一条 Error 日志");
+            Log("==== 结束 " + "，耗时：" + stopwatch.Elapsed.TotalSeconds.ToString("0.000") + " 秒 ========");
         }
 
         private void button2_Click(object sender, EventArgs e)
@@ -96,7 +104,7 @@ namespace LogUtilTest
                 {
                     for (int i = 0; i < n; i++)
                     {
-                        LogUtil.Debug("测试日志 " + i.ToString("000000"));
+                        LogUtil.Info("测试日志 " + i.ToString("000000"));
                         Interlocked.Increment(ref taskCount);
                     }
                 });
@@ -106,7 +114,7 @@ namespace LogUtilTest
                 {
                     for (int i = 0; i < n; i++)
                     {
-                        LogUtil.Debug("测试日志 " + i.ToString("000000"));
+                        LogUtil.Info("测试日志 " + i.ToString("000000"));
                         Interlocked.Increment(ref taskCount);
                     }
                 });
@@ -116,7 +124,7 @@ namespace LogUtilTest
                 {
                     for (int i = 0; i < n; i++)
                     {
-                        LogUtil.Debug("测试日志 " + i.ToString("000000"));
+                        LogUtil.Info("测试日志 " + i.ToString("000000"));
                         Interlocked.Increment(ref taskCount);
                     }
                 });
@@ -146,7 +154,7 @@ namespace LogUtilTest
                 {
                     for (int i = 0; i < n; i++)
                     {
-                        _log.Debug("测试日志 " + i.ToString("000000"));
+                        _log.Info("测试日志 " + i.ToString("000000"));
                         Interlocked.Increment(ref taskCount);
                     }
                 });
@@ -156,7 +164,7 @@ namespace LogUtilTest
                 {
                     for (int i = 0; i < n; i++)
                     {
-                        _log.Debug("测试日志 " + i.ToString("000000"));
+                        _log.Info("测试日志 " + i.ToString("000000"));
                         Interlocked.Increment(ref taskCount);
                     }
                 });
@@ -166,7 +174,7 @@ namespace LogUtilTest
                 {
                     for (int i = 0; i < n; i++)
                     {
-                        _log.Debug("测试日志 " + i.ToString("000000"));
+                        _log.Info("测试日志 " + i.ToString("000000"));
                         Interlocked.Increment(ref taskCount);
                     }
                 });
@@ -196,7 +204,7 @@ namespace LogUtilTest
                 {
                     for (int i = 0; i < n; i++)
                     {
-                        _log2.Debug("测试日志 " + i.ToString("000000"));
+                        _log2.Info("测试日志 " + i.ToString("000000"));
                         Interlocked.Increment(ref taskCount);
                     }
                 });
@@ -206,7 +214,7 @@ namespace LogUtilTest
                 {
                     for (int i = 0; i < n; i++)
                     {
-                        _log2.Debug("测试日志 " + i.ToString("000000"));
+                        _log2.Info("测试日志 " + i.ToString("000000"));
                         Interlocked.Increment(ref taskCount);
                     }
                 });
@@ -216,7 +224,7 @@ namespace LogUtilTest
                 {
                     for (int i = 0; i < n; i++)
                     {
-                        _log2.Debug("测试日志 " + i.ToString("000000"));
+                        _log2.Info("测试日志 " + i.ToString("000000"));
                         Interlocked.Increment(ref taskCount);
                     }
                 });
