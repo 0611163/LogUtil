@@ -40,3 +40,10 @@ LogUtil.Error("Error日志");
 LogUtil.Error(ex, "Error日志");
 LogUtil.Error("Error日志", ex);
 ```
+
+### 设置写入Debug文件的日志级别和写入Info文件的日志级别
+
+```C#
+LogUtil.WriteToDebug = LogLevel.Debug | LogLevel.Info | LogLevel.Error;
+LogUtil.WriteToInfo = LogLevel.Info | LogLevel.Error;
+```
